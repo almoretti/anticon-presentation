@@ -59,13 +59,14 @@ The whole presentation lives in `Drafts/anticon-talk-draft-007.html`. Images fro
 ├── Research/                         ← talk outline and working notes
 ├── Template/
 │   └── ai-deck-template.html         ← minimal impress.js template
-└── .claude/skills/anticon-slide-review/
+└── anticon-slide-review-skill/
+    ├── README.md                     ← how to install / adapt the skill
     └── SKILL.md                      ← Claude Code skill used to build the deck
 ```
 
 ## The `anticon-slide-review` skill
 
-This deck was built iteratively with [Claude Code](https://claude.com/claude-code) using a custom **Skill** that turns slide review into a structured ritual. The skill is included in this repo at `.claude/skills/anticon-slide-review/SKILL.md` so anyone using Claude Code in this directory automatically gets the workflow.
+This deck was built iteratively with [Claude Code](https://claude.com/claude-code) using a custom **Skill** that turns slide review into a structured ritual. The skill lives at [`anticon-slide-review-skill/SKILL.md`](./anticon-slide-review-skill/SKILL.md), with installation and adaptation notes in [`anticon-slide-review-skill/README.md`](./anticon-slide-review-skill/README.md).
 
 What it does:
 
