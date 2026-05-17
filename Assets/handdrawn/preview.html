@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Hand-drawn asset preview</title>
+  <link rel="stylesheet" href="./handdrawn-assets.css">
+  <style>
+    :root {
+      --ink: #1a1814;
+      --paper: #f3ede1;
+    }
+
+    body {
+      margin: 0;
+      font-family: Georgia, "Times New Roman", serif;
+      color: var(--ink);
+      background: var(--paper);
+    }
+
+    main {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 48px;
+    }
+
+    h1 {
+      font-size: 38px;
+      margin: 0 0 28px;
+      font-weight: 500;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 28px;
+      align-items: center;
+    }
+
+    .swatch {
+      position: relative;
+      min-height: 190px;
+      border: 1px solid rgba(26, 24, 20, 0.12);
+      background: rgba(255, 247, 232, 0.55);
+      overflow: hidden;
+    }
+
+    .label {
+      position: absolute;
+      left: 14px;
+      bottom: 12px;
+      font: 14px/1.2 system-ui, sans-serif;
+      opacity: 0.68;
+    }
+
+    .postit-demo {
+      width: 230px;
+      height: 194px;
+      margin: 8px auto 0;
+      display: grid;
+      place-items: center;
+      font-size: 28px;
+      transform: rotate(-2deg);
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Presentation asset preview</h1>
+    <section class="grid">
+      <div class="swatch"><div class="asset-postit asset-postit-folded postit-demo">fold</div><span class="label">postit-folded-yellow-transparent</span></div>
+      <div class="swatch"><div class="asset-postit asset-postit-scrambled postit-demo">crumple</div><span class="label">postit-scrambled-orange-transparent</span></div>
+      <div class="swatch"><div class="asset-postit asset-postit-straight postit-demo">straight</div><span class="label">postit-straight-blue-transparent</span></div>
+      <div class="swatch"><div class="asset-postit asset-postit-beautiful postit-demo">posted</div><span class="label">postit-beautiful-lavender-transparent</span></div>
+      <div class="swatch"><div class="asset-postit asset-postit-paper-attach postit-demo">paper</div><span class="label">postit-paper-attach-mint-transparent</span></div>
+      <div class="swatch"><div class="asset-postit asset-postit-side-attached postit-demo">side</div><span class="label">postit-side-attached-coral-transparent</span></div>
+      <div class="swatch"><div class="handdrawn-mark handdrawn-arrow-right" style="left:22px;top:48px;width:190px;height:88px"></div><span class="label">arrow-right</span></div>
+      <div class="swatch"><div class="handdrawn-mark handdrawn-arrow-down" style="left:76px;top:12px;width:92px;height:160px"></div><span class="label">arrow-down</span></div>
+      <div class="swatch"><div class="handdrawn-mark handdrawn-circle" style="left:20px;top:28px;width:190px;height:110px"></div><span class="label">circle-rough</span></div>
+      <div class="swatch"><div class="handdrawn-mark handdrawn-underline" style="left:18px;top:70px;width:200px;height:38px"></div><span class="label">underline-warm</span></div>
+      <div class="swatch"><div class="handdrawn-mark handdrawn-bracket-left" style="left:74px;top:12px;width:70px;height:160px"></div><span class="label">bracket-left</span></div>
+      <div class="swatch"><div class="handdrawn-mark handdrawn-scribble-cloud" style="left:16px;top:44px;width:200px;height:82px"></div><span class="label">scribble-cloud</span></div>
+      <div class="swatch"><div class="handdrawn-mark handdrawn-x" style="left:76px;top:44px;width:86px;height:86px"></div><span class="label">x-mark</span></div>
+    </section>
+  </main>
+</body>
+</html>

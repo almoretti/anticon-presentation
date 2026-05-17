@@ -1,0 +1,859 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1024, user-scalable=no, minimum-scale=1, maximum-scale=1">
+<title>AI Deck — Template</title>
+
+<!--
+  ============================================================
+  AI DECK — IMPRESS.JS TEMPLATE
+  ============================================================
+  21 content steps + 1 reveal step = 22 total
+  Visit order: 0 → 1 → 1.5 → 2 → 3 → 3.5 → 4 → 5 → 6 → 7
+               → 7.5 → 8 → 9 → 10 → 10.5 → 11 → 12 → 13
+               → 14 → 15 → 16 → reveal
+
+  Spatial layout: slides 1–10 trace the letter A,
+                  slides 11–16 form the letter I.
+
+  Subslides (0, 1.5, 3.5, 7.5, 10.5) use data-scale="0.3"
+  so they are smaller in the world and won't disrupt
+  the AI shape during the final zoom-out reveal.
+  ============================================================
+
+  HOW TO MODIFY:
+  • Slide content: edit the HTML inside each .step div
+  • Slide position: change data-x, data-y on the .step div
+  • Slide scale (smaller/larger): change data-scale
+  • Transition speed: data-transition-duration on each step
+  • Section colors: edit CSS variables in :root below
+  • Fonts: change @import URL and --font-* variables
+  • In-slide reveals: add class="substep" to elements; they
+    appear one-by-one on right-arrow (handler at bottom)
+-->
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500;9..144,700&family=Manrope:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Caveat:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  /* === COLOR PALETTE === */
+  --bg-page: #0e0d0b;
+  --bg-slide-A: #f3ede1;       /* warm cream — the A */
+  --bg-slide-I: #e6ebf0;       /* cool gray — the I */
+  --bg-subslide: #1a1814;      /* dark — subslides */
+  --bg-title: #0e0d0b;
+  --text-dark: #1a1814;
+  --text-muted: #7a716a;
+  --accent-warm: #c84a2e;      /* warm rust — A section */
+  --accent-cool: #355377;      /* deep blue — I section */
+
+  /* === TYPOGRAPHY === */
+  --font-display: "Fraunces", Georgia, serif;
+  --font-body: "Manrope", -apple-system, sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--bg-page);
+  color: white;
+  font-family: var(--font-body);
+  height: 100%;
+  overflow: hidden;
+}
+
+/* fallback when impress.js doesn't load */
+.fallback-message { display: none; }
+.impress-not-supported .fallback-message {
+  display: block;
+  padding: 60px;
+  text-align: center;
+  font-family: var(--font-mono);
+}
+
+/* navigation hint */
+.nav-hint {
+  position: fixed;
+  bottom: 18px;
+  right: 24px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: rgba(255,255,255,0.25);
+  letter-spacing: 0.15em;
+  z-index: 1000;
+  pointer-events: none;
+  text-transform: uppercase;
+}
+
+/* ===========================================================
+   SLIDE BASE
+   =========================================================== */
+.step {
+  position: relative;
+  width: 1920px;
+  height: 1080px;
+  padding: 120px 140px;
+  background: var(--bg-slide-A);
+  color: var(--text-dark);
+  border-radius: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  overflow: hidden;
+}
+
+/* ===========================================================
+   TYPOGRAPHY (default — used by section-A and section-I)
+   =========================================================== */
+.step .meta {
+  font-family: var(--font-mono);
+  font-size: 28px;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  margin: 0 0 56px 0;
+  font-weight: 500;
+}
+
+.step h1 {
+  font-family: var(--font-display);
+  font-size: 144px;
+  font-weight: 400;
+  line-height: 1.04;
+  margin: 0 0 32px 0;
+  letter-spacing: -0.02em;
+  font-variation-settings: "opsz" 144;
+  max-width: 1500px;
+}
+
+.step h2 {
+  font-family: var(--font-display);
+  font-size: 56px;
+  font-weight: 300;
+  font-style: italic;
+  line-height: 1.2;
+  margin: 0 0 40px 0;
+  color: var(--text-muted);
+  font-variation-settings: "opsz" 56;
+}
+
+.step p {
+  font-family: var(--font-body);
+  font-size: 36px;
+  line-height: 1.55;
+  margin: 0 0 16px 0;
+  color: var(--text-dark);
+  font-weight: 400;
+  max-width: 1400px;
+}
+
+.step .footer {
+  position: absolute;
+  bottom: 60px;
+  left: 140px;
+  right: 140px;
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--font-mono);
+  font-size: 22px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  font-weight: 500;
+}
+
+/* ===========================================================
+   SECTION VARIANTS
+   =========================================================== */
+.step.section-A { background: var(--bg-slide-A); color: var(--text-dark); }
+.step.section-A .meta { color: var(--accent-warm); }
+
+.step.section-I { background: var(--bg-slide-I); color: var(--text-dark); }
+.step.section-I .meta { color: var(--accent-cool); }
+
+/* ===========================================================
+   TITLE SLIDE (slide 0)
+   =========================================================== */
+.step.title {
+  background: var(--bg-title);
+  color: white;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 100px;
+}
+
+.step.title .meta {
+  color: var(--accent-warm);
+  margin-bottom: 80px;
+}
+
+.step.title h1 {
+  font-family: var(--font-display);
+  font-size: 320px;
+  font-weight: 300;
+  letter-spacing: -0.04em;
+  line-height: 1;
+  margin: 0;
+  color: white;
+  font-variation-settings: "opsz" 144;
+  max-width: none;
+}
+
+.step.title h2 {
+  font-family: var(--font-mono);
+  font-size: 28px;
+  color: rgba(255,255,255,0.55);
+  font-style: normal;
+  font-weight: 400;
+  margin-top: 64px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+/* ===========================================================
+   SUBSLIDE (image placeholder, scale=0.3)
+   =========================================================== */
+.step.subslide {
+  background: var(--bg-subslide);
+  color: white;
+  padding: 60px;
+}
+
+.step.subslide .image-placeholder {
+  width: 100%;
+  height: 100%;
+  background:
+    linear-gradient(135deg, rgba(200,74,46,0.12), rgba(53,83,119,0.12)),
+    repeating-linear-gradient(45deg, transparent 0, transparent 30px, rgba(255,255,255,0.025) 30px, rgba(255,255,255,0.025) 60px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border: 1.5px dashed rgba(255,255,255,0.18);
+  text-align: center;
+  padding: 80px;
+}
+
+.step.subslide .image-placeholder .label {
+  font-family: var(--font-mono);
+  font-size: 32px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.45);
+  margin-bottom: 32px;
+}
+
+.step.subslide .image-placeholder .name {
+  font-family: var(--font-display);
+  font-size: 200px;
+  font-weight: 300;
+  color: white;
+  line-height: 1;
+  font-variation-settings: "opsz" 144;
+}
+
+.step.subslide .image-placeholder .hint {
+  font-family: var(--font-mono);
+  font-size: 22px;
+  color: rgba(255,255,255,0.3);
+  margin-top: 40px;
+  letter-spacing: 0.04em;
+}
+
+/* ===========================================================
+   REVEAL STEP (transparent — the spatial AI is the hero)
+   =========================================================== */
+.step.reveal {
+  background: transparent;
+  border: none;
+  pointer-events: none;
+  padding: 0;
+}
+
+.step.reveal .thank-you-panel {
+  position: absolute;
+  top: 56%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  max-width: 600px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  pointer-events: auto;
+  opacity: 0;
+  transition: opacity 1.4s 1s;
+}
+
+.step.reveal .marketing-label {
+  position: absolute;
+  top: 4%;
+  left: 19%;
+  font-family: "Caveat", cursive;
+  font-size: 280px;
+  font-weight: 500;
+  color: var(--accent-warm);
+  line-height: 1;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+  pointer-events: none;
+  transform: rotate(-3deg);
+  transform-origin: left center;
+  opacity: 0;
+  transition: opacity 1.6s 1.8s;
+}
+
+.step.reveal.active .marketing-label {
+  opacity: 1;
+}
+
+.step.reveal.active .thank-you-panel {
+  opacity: 1;
+}
+
+.step.reveal h1 {
+  font-family: var(--font-display);
+  font-size: 120px;
+  font-weight: 300;
+  font-variation-settings: "opsz" 144;
+  color: white;
+  margin: 0 0 28px 0;
+  letter-spacing: -0.04em;
+  line-height: 0.95;
+  max-width: 600px;
+  text-align: left;
+}
+
+.step.reveal .contact {
+  font-family: var(--font-mono);
+  font-size: 22px;
+  color: rgba(255,255,255,0.5);
+  margin: 0 0 48px 0;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  font-weight: 400;
+  text-align: left;
+}
+
+.step.reveal .socials {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 22px;
+}
+
+.step.reveal .socials a {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  font-family: var(--font-mono);
+  font-size: 24px;
+  color: rgba(255,255,255,0.85);
+  text-decoration: none;
+  letter-spacing: 0.04em;
+  transition: color 0.3s, transform 0.3s;
+}
+
+.step.reveal .socials a:hover {
+  color: white;
+  transform: translateX(6px);
+}
+
+.step.reveal .socials .icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+}
+
+.step.reveal .socials svg {
+  width: 100%;
+  height: 100%;
+  fill: currentColor;
+}
+
+/* ===========================================================
+   ENTER ANIMATIONS — triggered by impress.js .active class
+   =========================================================== */
+.step.section-A h1, .step.section-I h1,
+.step.section-A h2, .step.section-I h2,
+.step.section-A p, .step.section-I p,
+.step.section-A .meta, .step.section-I .meta {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.9s, transform 0.9s;
+}
+
+.step.active.section-A h1, .step.active.section-I h1,
+.step.active.section-A h2, .step.active.section-I h2,
+.step.active.section-A p, .step.active.section-I p,
+.step.active.section-A .meta, .step.active.section-I .meta {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* stagger: meta first, then h1, then h2, then p */
+.step.section-A .meta, .step.section-I .meta { transition-delay: 0.3s; }
+.step.section-A h1, .step.section-I h1 { transition-delay: 0.5s; }
+.step.section-A h2, .step.section-I h2 { transition-delay: 0.7s; }
+.step.section-A p, .step.section-I p { transition-delay: 0.85s; }
+
+/* title slide enter */
+.step.title h1, .step.title h2, .step.title .meta {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 1.4s, transform 1.4s;
+}
+.step.title.active h1, .step.title.active h2, .step.title.active .meta {
+  opacity: 1;
+  transform: translateY(0);
+}
+.step.title .meta { transition-delay: 0.4s; }
+.step.title h1 { transition-delay: 0.7s; }
+.step.title h2 { transition-delay: 1.3s; }
+
+/* subslide enter */
+.step.subslide .image-placeholder {
+  opacity: 0;
+  transform: scale(0.96);
+  transition: opacity 1s 0.3s, transform 1s 0.3s;
+}
+.step.subslide.active .image-placeholder {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* ===========================================================
+   SUBSTEPS (in-slide reveals)
+   Add class="substep" to any element inside a slide.
+   It will appear on next arrow press (handler at bottom).
+   =========================================================== */
+.substep {
+  opacity: 0;
+  transform: translateY(12px);
+  transition: opacity 0.6s, transform 0.6s;
+}
+.substep.substep-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+</style>
+</head>
+<body class="impress-not-supported">
+
+<div class="fallback-message">
+  <p>This presentation needs a modern browser with CSS 3D transforms.</p>
+</div>
+
+<div class="nav-hint">→ advance · esc overview</div>
+
+<div id="impress"
+     data-width="1920"
+     data-height="1080"
+     data-perspective="1000"
+     data-transition-duration="1000"
+     data-min-scale="0"
+     data-max-scale="20">
+
+  <!-- ═══════════════════════════════════════════════════════
+       0 — TITLE
+       Subslide that opens the deck. The transition
+       0 → 1 is a small zoom-out (mini-reveal).
+       ═══════════════════════════════════════════════════════ -->
+  <div id="slide-0" class="step title"
+       data-x="0" data-y="12000" data-scale="0.3">
+    <p class="meta">A presentation · 2026</p>
+    <h1>Your Title</h1>
+    <h2>Subtitle goes here</h2>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════
+       1 — Bottom-left foot of A
+       ═══════════════════════════════════════════════════════ -->
+  <div id="slide-1" class="step section-A"
+       data-x="1500" data-y="12000">
+    <p class="meta">Part one · 01</p>
+    <h1>The opening point</h1>
+    <h2>Bottom-left foot of the A</h2>
+    <p>Replace with your real opening content. The deck enters here from the title.</p>
+    <div class="footer">
+      <span>The A</span>
+      <span>01 / 16</span>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════
+       1.5 — Image: between the feet
+       ═══════════════════════════════════════════════════════ -->
+  <div id="slide-1-5" class="step subslide"
+       data-x="6000" data-y="12000" data-scale="0.3">
+    <div class="image-placeholder">
+      <div class="label">Image</div>
+      <div class="name">1.5</div>
+      <div class="hint">Replace this div with &lt;img src="…"&gt;</div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════
+       2 — Bottom-right foot of A
+       ═══════════════════════════════════════════════════════ -->
+  <div id="slide-2" class="step section-A"
+       data-x="10500" data-y="12000">
+    <p class="meta">Part one · 02</p>
+    <h1>The second point</h1>
+    <h2>Bottom-right foot of the A</h2>
+    <p>The first horizontal sweep ends here. Camera now lifts to row two.</p>
+    <div class="footer">
+      <span>The A</span>
+      <span>02 / 16</span>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════
+       3 — Lower-right diagonal
+       ═══════════════════════════════════════════════════════ -->
+  <div id="slide-3" class="step section-A"
+       data-x="9700" data-y="9800">
+    <p class="meta">Part two · 03</p>
+    <h1>Climbing the right side</h1>
+    <h2>Lower-right diagonal</h2>
+    <p>Right-to-left sweep begins. Body content for slide three.</p>
+    <div class="footer">
+      <span>The A</span>
+      <span>03 / 16</span>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════
+       3.5 — Image: between lower-mid slides
+       ═══════════════════════════════════════════════════════ -->
+  <div id="slide-3-5" class="step subslide"
+       data-x="6000" data-y="9800" data-scale="0.3">
+    <div class="image-placeholder">
+      <div class="label">Image</div>
+      <div class="name">3.5</div>
+      <div class="hint">Replace this div with &lt;img src="…"&gt;</div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════
+       4 — Lower-left diagonal
+       ═══════════════════════════════════════════════════════ -->
+  <div id="slide-4" class="step section-A"
+       data-x="2300" data-y="9800">
+    <p class="meta">Part two · 04</p>
+    <h1>Reaching the left</h1>
+    <h2>Lower-left diagonal</h2>
+    <p>End of the second row, left side. Body content for slide four.</p>
+    <div class="footer">
+      <span>The A</span>
+      <span>04 / 16</span>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════
+       5 — Crossbar: left end
+       ═══════════════════════════════════════════════════════ -->
+  <div id="slide-5" class="step section-A"
+       data-x="3150" data-y="7600">
+    <p class="meta">Part three · 05 · the crossbar</p>
+    <h1>The crossbar opens</h1>
+    <h2>Left end of the dash</h2>
+    <p>The connecting bar of the A starts here. Sweep left-to-right.</p>
+    <div class="footer">
+      <span>The A · Crossbar</span>
+      <span>05 / 16</span>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════
+       6 — Crossbar: middle
+       ═══════════════════════════════════════════════════════ -->
+  <div id="slide-6" class="step section-A"
+       data-x="6000" data-y="7600">
+    <p class="meta">Part three · 06 · the crossbar</p>
+    <h1>The connection</h1>
+    <h2>Middle of the dash</h2>
+    <p>The literal join point — a natural place for the bridging idea of your deck.</p>
+    <div class="footer">
+      <span>The A · Crossbar</span>
+      <span>06 / 16</span>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════
+       7 — Crossbar: right end
+       ═══════════════════════════════════════════════════════ -->
+  <div id="slide-7" class="step section-A"
+       data-x="8850" data-y="7600">
+    <p class="meta">Part three · 07 · the crossbar</p>
+    <h1>The crossbar closes</h1>
+    <h2>Right end of the dash</h2>
+    <p>From here we lift up over the bridge to the upper diagonals.</p>
+    <div class="footer">
+      <span>The A · Crossbar</span>
+      <span>07 / 16</span>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════
+       7.5 — Bridge image (above slide 6)
+       Smooths the climb from crossbar to upper-mid row.
+       ═══════════════════════════════════════════════════════ -->
+  <div id="slide-7-5" class="step subslide"
+       data-x="6000" data-y="5400" data-scale="0.3">
+    <div class="image-placeholder">
+      <div class="label">Bridge</div>
+      <div class="name">7.5</div>
+      <div class="hint">Replace this div with &lt;img src="…"&gt;</div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════
+       8 — Upper-right diagonal
+       ═══════════════════════════════════════════════════════ -->
+  <div id="slide-8" class="step section-A"
+       data-x="7250" data-y="3300">
+    <p class="meta">Part four · 08</p>
+    <h1>Approaching the apex</h1>
+    <h2>Upper-right diagonal</h2>
+    <p>Right side of the A's upper region. One row before the peak.</p>
+    <div class="footer">
+      <span>The A</span>
+      <span>08 / 16</span>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════
+       9 — Upper-left diagonal
+       ═══════════════════════════════════════════════════════ -->
+  <div id="slide-9" class="step section-A"
+       data-x="4750" data-y="3300">
+    <p class="meta">Part four · 09</p>
+    <h1>Left of the peak</h1>
+    <h2>Upper-left diagonal</h2>
+    <p>Last horizontal traverse before reaching the apex.</p>
+    <div class="footer">
+      <span>The A</span>
+      <span>09 / 16</span>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════
+       10 — Apex of A
+       Last slide of the A. Next: long sweep to the I.
+       ═══════════════════════════════════════════════════════ -->
+  <div id="slide-10" class="step section-A"
+       data-x="6000" data-y="0">
+    <p class="meta">Part four · 10 · the apex</p>
+    <h1>The peak</h1>
+    <h2>Top of the A</h2>
+    <p>End of the first letter. The camera now glides across the top of the canvas to the I.</p>
+    <div class="footer">
+      <span>The A · Apex</span>
+      <span>10 / 16</span>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════
+       10.5 — Image: between apex and I top
+       Most visible subslide in the overview reveal —
+       sits in the empty space between A and I.
+       ═══════════════════════════════════════════════════════ -->
+  <div id="slide-10-5" class="step subslide"
+       data-x="10000" data-y="0" data-scale="0.3"
+       data-transition-duration="1500">
+    <div class="image-placeholder">
+      <div class="label">A to I</div>
+      <div class="name">10.5</div>
+      <div class="hint">Most visible subslide — pick a striking image</div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════
+       11 — Top of I (Section I begins)
+       Slow transition lets the AI moment land.
+       ═══════════════════════════════════════════════════════ -->
+  <div id="slide-11" class="step section-I"
+       data-x="14000" data-y="0"
+       data-transition-duration="1500">
+    <p class="meta">Part five · 11 · the I begins</p>
+    <h1>The second letter</h1>
+    <h2>Top of the I</h2>
+    <p>Section break. From here the deck descends vertically through the I.</p>
+    <div class="footer">
+      <span>The I</span>
+      <span>11 / 16</span>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════
+       12 — I body
+       ═══════════════════════════════════════════════════════ -->
+  <div id="slide-12" class="step section-I"
+       data-x="14000" data-y="2400">
+    <p class="meta">Part five · 12</p>
+    <h1>Slide twelve</h1>
+    <h2>Down the I</h2>
+    <p>Second slide of the I. Body content here.</p>
+    <div class="footer">
+      <span>The I</span>
+      <span>12 / 16</span>
+    </div>
+  </div>
+
+  <div id="slide-13" class="step section-I"
+       data-x="14000" data-y="4800">
+    <p class="meta">Part five · 13</p>
+    <h1>Slide thirteen</h1>
+    <h2>Down the I</h2>
+    <p>Third slide of the I. Body content here.</p>
+    <div class="footer">
+      <span>The I</span>
+      <span>13 / 16</span>
+    </div>
+  </div>
+
+  <div id="slide-14" class="step section-I"
+       data-x="14000" data-y="7200">
+    <p class="meta">Part five · 14</p>
+    <h1>Slide fourteen</h1>
+    <h2>Down the I</h2>
+    <p>Fourth slide of the I. Body content here.</p>
+    <div class="footer">
+      <span>The I</span>
+      <span>14 / 16</span>
+    </div>
+  </div>
+
+  <div id="slide-15" class="step section-I"
+       data-x="14000" data-y="9600">
+    <p class="meta">Part five · 15</p>
+    <h1>Slide fifteen</h1>
+    <h2>Down the I</h2>
+    <p>Fifth slide of the I. Body content here.</p>
+    <div class="footer">
+      <span>The I</span>
+      <span>15 / 16</span>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════
+       16 — Bottom of I (last content slide)
+       ═══════════════════════════════════════════════════════ -->
+  <div id="slide-16" class="step section-I"
+       data-x="14000" data-y="12000">
+    <p class="meta">Part five · 16 · the end</p>
+    <h1>Wrapping up</h1>
+    <h2>Bottom of the I</h2>
+    <p>Last content slide. Press right one more time for the reveal.</p>
+    <div class="footer">
+      <span>The I</span>
+      <span>16 / 16</span>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════
+       17 — REVEAL + THANK YOU
+       Camera zooms way out: the spatial AI shape (formed by
+       slides 1-16) sits in the upper portion of the view,
+       with a Thank You panel anchored to the bottom of the
+       framed area. data-y is shifted down (10000) and scale
+       is bigger (20) to make room for both elements.
+       ═══════════════════════════════════════════════════════ -->
+  <div id="slide-reveal" class="step reveal"
+       data-x="61020" data-y="33480" data-scale="70"
+       data-transition-duration="4000">
+    <div class="marketing-label">Marketing</div>
+    <div class="thank-you-panel">
+      <h1>Thank you</h1>
+      <p class="contact">Alessandro Moretti</p>
+      <div class="socials">
+        <a href="https://linkedin.com/in/almoretti" target="_blank" rel="noopener">
+          <span class="icon">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+            </svg>
+          </span>
+          <span class="handle">/almoretti</span>
+        </a>
+        <a href="https://github.com/almoretti" target="_blank" rel="noopener">
+          <span class="icon">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 0C5.374 0 0 5.373 0 12 0 17.302 3.438 21.8 8.207 23.387c.6.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.565 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z"/>
+            </svg>
+          </span>
+          <span class="handle">@almoretti</span>
+        </a>
+        <a href="https://x.com/alesmoretti" target="_blank" rel="noopener">
+          <span class="icon">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+            </svg>
+          </span>
+          <span class="handle">@alesmoretti</span>
+        </a>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- impress.js core (loaded from jsDelivr → GitHub) -->
+<script src="https://cdn.jsdelivr.net/gh/impress/impress.js@2.0.0/js/impress.js"></script>
+
+<script>
+  // initialize impress
+  impress().init();
+
+  // ============================================================
+  // SUBSTEP HANDLER
+  // ------------------------------------------------------------
+  // Add class="substep" to any element inside a .step div.
+  // It will fade in on the next right-arrow press.
+  // Press left to step back through them.
+  // ============================================================
+  (function () {
+    let activeStep = null;
+    let substeps = [];
+    let substepIndex = 0;
+
+    document.addEventListener('impress:stepenter', (e) => {
+      activeStep = e.target;
+      substeps = Array.from(activeStep.querySelectorAll('.substep'));
+      substepIndex = 0;
+      substeps.forEach(s => s.classList.remove('substep-visible'));
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (!activeStep || substeps.length === 0) return;
+
+      if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') {
+        if (substepIndex < substeps.length) {
+          substeps[substepIndex].classList.add('substep-visible');
+          substepIndex++;
+          e.stopImmediatePropagation();
+          e.preventDefault();
+        }
+      } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+        if (substepIndex > 0) {
+          substepIndex--;
+          substeps[substepIndex].classList.remove('substep-visible');
+          e.stopImmediatePropagation();
+          e.preventDefault();
+        }
+      }
+    }, true); // capture phase, intercepts before impress.js
+  })();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,4200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1024, user-scalable=no, minimum-scale=1, maximum-scale=1">
+<title>Code is Cheap, Requirements are Expensive — Draft 006-C (Notebook)</title>
+
+<!--
+  ============================================================
+  VARIANT C — HAND-DRAWN NOTEBOOK
+  ============================================================
+  Same spatial layout, content, citations and impress.js plumbing
+  as Draft 006. Visual direction: bullet journal + Edward Tufte
+  marginalia + design-thinking workshop Post-its.
+
+  Caveat is dominant for headlines/annotations.
+  Manrope handles any prose longer than 1-2 sentences (readable).
+  Fraunces italic for emphasized words and quotes.
+  JetBrains Mono used very sparingly (small caps meta only).
+  ============================================================
+-->
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500;9..144,700&family=Manrope:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Caveat:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  /* === LOCKED COLOR PALETTE === */
+  --bg-page: #0e0d0b;
+  --bg-slide-A: #f3ede1;       /* warm cream — A side */
+  --bg-slide-I: #e6ebf0;       /* cool gray — I side */
+  --bg-subslide: #1a1814;      /* dark — title/subslides */
+  --bg-title: #0e0d0b;
+  --text-dark: #1a1814;
+  --text-muted: #7a716a;
+  --accent-warm: #c84a2e;      /* warm rust — A accent ("red marker") */
+  --accent-cool: #355377;      /* deep blue — I accent ("blue marker") */
+
+  /* === TYPOGRAPHY === */
+  --font-hand: "Caveat", cursive;
+  --font-display: "Fraunces", Georgia, serif;
+  --font-body: "Manrope", -apple-system, sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--bg-page);
+  color: white;
+  font-family: var(--font-body);
+  height: 100%;
+  overflow: hidden;
+}
+
+.fallback-message { display: none; }
+.impress-not-supported .fallback-message {
+  display: block;
+  padding: 60px;
+  text-align: center;
+  font-family: var(--font-mono);
+}
+
+.nav-hint {
+  display: none;
+}
+
+/* =====================================================================
+   STEP BASE — notebook page with faint dot-grid background
+   ===================================================================== */
+.step {
+  position: relative;
+  width: 1920px;
+  height: 1080px;
+  padding: 80px 100px;
+  background: var(--bg-slide-A);
+  color: var(--text-dark);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  overflow: hidden;
+  background-image:
+    radial-gradient(circle, rgba(26,24,20,0.10) 1.2px, transparent 1.3px);
+  background-size: 36px 36px;
+  background-position: 0 0;
+}
+
+/* -----------------------------------------------------------
+   SLIDE-BACKGROUND PAPER VARIANTS — applied as an extra class
+   on the .step (e.g. <div class="step section-A bg-dotgrid">).
+   Each preset stacks a subtle paper pattern on top of a tinted
+   cream base. Pick one per slide for visual variety across the
+   deck. Pattern definitions are factored into CSS vars so the
+   tinted variants reuse them.
+   ----------------------------------------------------------- */
+:root {
+  --paper-pattern-dotgrid: radial-gradient(circle at 2px 2px, rgba(53,83,119,0.50) 1.6px, transparent 2.4px);
+  --paper-pattern-lined: repeating-linear-gradient(to bottom, transparent 0, transparent 47px, rgba(53,83,119,0.18) 47px, rgba(53,83,119,0.18) 48px);
+  --paper-pattern-grid:
+    repeating-linear-gradient(to bottom, transparent 0, transparent 35px, rgba(53,83,119,0.14) 35px, rgba(53,83,119,0.14) 36px),
+    repeating-linear-gradient(to right,  transparent 0, transparent 35px, rgba(53,83,119,0.14) 35px, rgba(53,83,119,0.14) 36px);
+}
+/* DOT GRID — engineering-pad style.
+   Compound selectors (`.step.section-A.bg-*`) so the colour override
+   beats the later `.step.section-A` / `.step.section-I` base-colour rule. */
+.step.bg-dotgrid                        { background-image: var(--paper-pattern-dotgrid); background-size: 36px 36px; }
+.step.section-A.bg-dotgrid-warm,
+.step.section-I.bg-dotgrid-warm         { background-image: radial-gradient(circle at 2px 2px, rgba(53,83,119,0.28) 1.1px, transparent 1.7px); background-size: 44px 44px; background-color: #f4ead2; }
+.step.section-A.bg-dotgrid-cool,
+.step.section-I.bg-dotgrid-cool         { background-image: var(--paper-pattern-dotgrid); background-size: 36px 36px; background-color: #e9ece1; }
+.step.section-A.bg-dotgrid-rose,
+.step.section-I.bg-dotgrid-rose         { background-image: radial-gradient(circle at 2px 2px, rgba(53,83,119,0.30) 1.1px, transparent 1.7px); background-size: 44px 44px; background-color: #f1e3dc; }
+/* RULED — horizontal lines, like a steno pad. */
+.step.bg-lined                          { background-image: var(--paper-pattern-lined); }
+.step.section-A.bg-lined-warm,
+.step.section-I.bg-lined-warm           { background-image: var(--paper-pattern-lined); background-color: #f4ead2; }
+.step.section-A.bg-lined-cool,
+.step.section-I.bg-lined-cool           { background-image: var(--paper-pattern-lined); background-color: #e9ece1; }
+/* SQUARE GRID — graph paper. */
+.step.bg-grid                           { background-image: var(--paper-pattern-grid); }
+.step.section-A.bg-grid-warm,
+.step.section-I.bg-grid-warm            { background-image: var(--paper-pattern-grid); background-color: #f4ead2; }
+
+.step.section-A {
+  background-color: var(--bg-slide-A);
+  background-image:
+    radial-gradient(circle, rgba(26,24,20,0.10) 1.2px, transparent 1.3px);
+  background-size: 36px 36px;
+}
+.step.section-I {
+  background-color: var(--bg-slide-I);
+  background-image:
+    radial-gradient(circle, rgba(53,83,119,0.13) 1.2px, transparent 1.3px);
+  background-size: 36px 36px;
+}
+
+/* coffee stain — very subtle, only on a few slides */
+.coffee-stain {
+  position: absolute;
+  width: 240px;
+  height: 240px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%,
+    rgba(112, 72, 40, 0.12) 0%,
+    rgba(112, 72, 40, 0.08) 35%,
+    rgba(112, 72, 40, 0.02) 70%,
+    transparent 100%);
+  pointer-events: none;
+  z-index: 0;
+}
+.coffee-stain.ring {
+  background: transparent;
+  border: 8px solid rgba(112, 72, 40, 0.10);
+  box-shadow: inset 0 0 0 14px rgba(112,72,40,0.04);
+}
+
+/* ===========================================================
+   META — small caps, in muted color, like a journal date tag
+   =========================================================== */
+.step .meta {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  margin: 0 0 28px 0;
+  font-weight: 500;
+  color: var(--text-muted);
+  position: relative;
+  z-index: 2;
+}
+.step.section-A .meta { color: var(--accent-warm); opacity: 0.75; }
+.step.section-I .meta { color: var(--accent-cool); opacity: 0.75; }
+
+/* ===========================================================
+   HEADLINES — Caveat handwriting, slightly tilted
+   =========================================================== */
+.step h1 {
+  font-family: var(--font-hand);
+  font-size: 138px;
+  font-weight: 700;
+  line-height: 0.96;
+  margin: 0 0 26px 0;
+  letter-spacing: 0.005em;
+  max-width: 1540px;
+  color: var(--text-dark);
+  transform: rotate(-1deg);
+  transform-origin: left top;
+  position: relative;
+  z-index: 2;
+}
+
+.step h2 {
+  font-family: var(--font-hand);
+  font-size: 56px;
+  font-weight: 500;
+  line-height: 1.1;
+  margin: 0 0 28px 0;
+  color: var(--text-muted);
+  max-width: 1340px;
+  transform: rotate(0.7deg);
+  position: relative;
+  z-index: 2;
+}
+
+.step p {
+  font-family: var(--font-body);
+  font-size: 26px;
+  line-height: 1.5;
+  margin: 0 0 14px 0;
+  color: var(--text-dark);
+  font-weight: 400;
+  max-width: 1320px;
+  position: relative;
+  z-index: 2;
+}
+
+/* Fraunces emphasis inside body prose */
+.step p em,
+.step .em-warm {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 500;
+  color: var(--accent-warm);
+  font-size: 1.06em;
+}
+.step.section-I p em,
+.step.section-I .em-cool,
+.step .em-cool {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 500;
+  color: var(--accent-cool);
+  font-size: 1.06em;
+}
+
+/* footer — handwritten lower margin notes */
+.step .footer {
+  position: absolute;
+  bottom: 36px;
+  left: 100px;
+  right: 100px;
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--font-hand);
+  font-size: 28px;
+  color: var(--text-muted);
+  font-weight: 500;
+  z-index: 2;
+}
+.step .footer span:last-child {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  align-self: flex-end;
+  color: rgba(26,24,20,0.4);
+}
+
+/* ===========================================================
+   MARGINALIA — small handwritten notes in the margins
+   =========================================================== */
+.marginalia {
+  position: absolute;
+  font-family: var(--font-hand);
+  font-size: 34px;
+  color: var(--accent-warm);
+  font-weight: 500;
+  line-height: 1.05;
+  z-index: 3;
+  pointer-events: none;
+}
+.section-I .marginalia { color: var(--accent-cool); }
+.marginalia.pencil { color: var(--text-muted); opacity: 0.7; }
+
+/* ===========================================================
+   STICKY-NOTE STYLE PANEL
+   =========================================================== */
+.sticky {
+  position: relative;
+  padding: 28px 32px;
+  background: rgba(255, 247, 232, 0.7);
+  border: 2px solid rgba(26,24,20,0.12);
+  border-radius: 6px;
+  box-shadow: 0 6px 18px rgba(26,24,20,0.10),
+              0 2px 4px rgba(26,24,20,0.06);
+  transform: rotate(-1.2deg);
+}
+.sticky.warm { background: rgba(200,74,46,0.10); border-color: rgba(200,74,46,0.30); }
+.sticky.cool { background: rgba(53,83,119,0.10); border-color: rgba(53,83,119,0.30); }
+.sticky.dark {
+  background: #1a1814; color: #f3ede1;
+  border-color: rgba(243,237,225,0.20);
+}
+
+/* ===========================================================
+   HAND-DRAWN FRAME (used to wrap images / boxes)
+   Uses rounded irregular corner via SVG separately — but
+   here we apply a "rough" outline via CSS pseudo-elements.
+   =========================================================== */
+.hand-frame {
+  position: relative;
+  padding: 14px;
+}
+.hand-frame::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border: 3px solid var(--text-dark);
+  border-radius: 18px 14px 22px 16px / 18px 22px 14px 18px;
+  transform: rotate(-0.4deg);
+  pointer-events: none;
+}
+.hand-frame.warm::before { border-color: var(--accent-warm); }
+.hand-frame.cool::before { border-color: var(--accent-cool); }
+
+/* ===========================================================
+   PAPER-MAT — reusable image-on-paper container.
+   Wraps a rectangular image (chart, screenshot, asset) in a
+   slightly tilted "piece of paper" with a paper shadow and a
+   masking-tape strip at the top. Three paper variants:
+     .paper-mat--yellow   warm-yellow post-it
+     .paper-mat--lined    cream paper with horizontal ruled lines
+     .paper-mat--grid     cream paper with faint dot grid
+   Tilt and tape can be tuned per-use via inline transform/var.
+   =========================================================== */
+.paper-mat {
+  position: relative;
+  display: block;
+  box-sizing: border-box;
+  padding: 52px 48px 48px 48px;
+  border-radius: 4px;
+  transform: rotate(var(--mat-tilt, -0.6deg));
+  box-shadow: 0 8px 22px rgba(26,24,20,0.10);
+}
+.paper-mat > img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+/* masking-tape strip across the top */
+.paper-mat::after {
+  content: "";
+  position: absolute;
+  top: -14px;
+  left: 50%;
+  width: 160px;
+  height: 32px;
+  background: rgba(245, 240, 225, 0.78);
+  border: 1px solid rgba(0,0,0,0.05);
+  box-shadow: 0 1px 3px rgba(26,24,20,0.08);
+  transform: translateX(-50%) rotate(var(--tape-tilt, -2.2deg));
+  z-index: 6;
+}
+/* --- variants --- */
+.paper-mat--yellow {
+  background: #fff4d2;
+}
+.paper-mat--orange {
+  background: #f6c188;
+}
+.paper-mat--blue {
+  background: #d8e4f0;
+}
+.paper-mat--mint {
+  background: #d8e8d4;
+}
+.paper-mat--rose {
+  background: #f5dad5;
+}
+.paper-mat--lined {
+  background:
+    repeating-linear-gradient(
+      to bottom,
+      transparent 0,
+      transparent 33px,
+      rgba(53,83,119,0.22) 33px,
+      rgba(53,83,119,0.22) 34px
+    ),
+    #fefdf3;
+}
+.paper-mat--grid {
+  background:
+    radial-gradient(circle at 1px 1px, rgba(53,83,119,0.28) 1px, transparent 1.5px) 0 0 / 22px 22px,
+    #fefdf3;
+}
+
+/* ===========================================================
+   SCRIBBLE UNDERLINE — used behind a word
+   =========================================================== */
+.underline-warm,
+.underline-cool {
+  position: relative;
+  display: inline-block;
+}
+.underline-warm::after,
+.underline-cool::after {
+  content: "";
+  position: absolute;
+  left: -4%;
+  right: -4%;
+  bottom: -2px;
+  height: 16px;
+  background: var(--accent-warm);
+  opacity: 0.30;
+  transform: rotate(-1.2deg) skewX(-4deg);
+  border-radius: 50% 50% 50% 50% / 60% 40% 60% 40%;
+  z-index: -1;
+}
+.underline-cool::after { background: var(--accent-cool); }
+
+/* ===========================================================
+   CIRCLED — wraps a word in a scribbled ellipse (SVG)
+   =========================================================== */
+.circled {
+  position: relative;
+  display: inline-block;
+  padding: 0 10px;
+}
+.circled svg.circle-svg {
+  position: absolute;
+  top: -18%;
+  left: -8%;
+  width: 116%;
+  height: 136%;
+  z-index: -1;
+  pointer-events: none;
+}
+
+/* ===========================================================
+   TITLE SLIDE — inside cover of a notebook
+   =========================================================== */
+/* ---------------------------------------------------------------------
+   TITLE SLIDE — full-page lined notebook paper.
+   No frame, no spiral binding. Content sits centered on the page.
+   --------------------------------------------------------------------- */
+.step.title {
+  background: #fbfcfd;
+  color: var(--text-dark);
+  align-items: center;
+  justify-content: center;
+  padding: 260px 60px 140px 60px;  /* symmetric-ish so title centers; top fits smaller post-its */
+  text-align: center;
+  /* horizontal ruled lines */
+  background-image:
+    linear-gradient(to bottom, rgba(53,83,119,0.13) 1px, transparent 1px);
+  background-size: 100% 70px;
+  background-position: 0 70px;
+}
+
+/* meta label — pinned to the very top of the slide, centered */
+.step.title .meta {
+  position: absolute;
+  top: 38px;
+  left: 50%;
+  margin: 0;
+  font-family: var(--font-hand);
+  font-size: 28px;
+  font-weight: 500;
+  text-transform: none;
+  letter-spacing: 0;
+  color: rgba(53,83,119,0.55);
+  transform: translateX(-50%) rotate(-1deg);
+}
+
+/* HERO headline — lighter weight for the surround, BOLD only on the
+   emphasized rust word ("Requirements"). */
+.step.title h1 {
+  font-family: var(--font-hand);
+  font-size: 220px;
+  font-weight: 500;
+  letter-spacing: 0;
+  line-height: 0.92;
+  margin: 0 0 28px 0;
+  color: var(--accent-cool);
+  max-width: 1820px;
+  transform: rotate(-1.2deg);
+  text-shadow: none;
+}
+.step.title h1 .ink-rust {
+  color: var(--accent-warm);
+  font-weight: 700;
+}
+
+.step.title h2 {
+  font-family: var(--font-hand);
+  font-style: italic;
+  font-weight: 500;
+  font-size: 46px;
+  color: rgba(53,83,119,0.78);
+  letter-spacing: 0;
+  text-transform: none;
+  margin-top: 0;
+  transform: rotate(-0.3deg);
+  max-width: 1180px;
+}
+
+/* tagline anchored to the bottom-right corner — frames the talk as notes */
+.step.title .working-note {
+  position: absolute;
+  right: 60px;
+  bottom: 36px;
+  margin: 0;
+  font-family: var(--font-hand);
+  font-style: italic;
+  font-weight: 500;
+  font-size: 26px;
+  line-height: 1.3;
+  color: rgba(53,83,119,0.55);
+  letter-spacing: 0;
+}
+
+/* ------- POST-IT NOTES — background "scribbled questions" the audience brings.
+   CSS-only flat-colour post-its using the deck's paper-mat palette
+   (blue / orange / rose / mint). Previous version used heavy PNG assets
+   (~8 MB combined) which have been removed in favour of inline CSS. */
+.title-postit {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-family: var(--font-hand);
+  font-weight: 600;
+  color: var(--text-dark);
+  z-index: 4;
+  line-height: 1.15;
+  padding: 22px 18px 18px 18px;
+  border-radius: 4px 6px 5px 4px;
+  box-shadow: 5px 7px 0 rgba(26,24,20,0.10);
+}
+/* small masking-tape strip at the top of each post-it */
+.title-postit::after {
+  content: "";
+  position: absolute;
+  top: -9px;
+  left: 50%;
+  width: 48px;
+  height: 16px;
+  background: rgba(245, 240, 225, 0.78);
+  border: 1px solid rgba(0,0,0,0.05);
+  box-shadow: 0 1px 2px rgba(26,24,20,0.08);
+  transform: translateX(-50%) rotate(var(--tape-tilt, -3deg));
+}
+/* colour variants — mapped from the previous PNG names to the deck's
+   paper-mat colour family so the title slide reads cohesive with the rest. */
+.title-postit.is-blue   { background: #d8e4f0; }
+.title-postit.is-orange { background: #f6c188; }
+.title-postit.is-rose   { background: #f5dad5; }
+.title-postit.is-mint   { background: #d8e8d4; }
+.title-postit.is-yellow { background: #fff4d2; }
+
+/* placement & size — intentionally varied so the cluster feels casual.
+   Sizes range from 150px (short text) to 240px (long text). */
+.title-postit.pos-stack-top { top: 24px;  left: 70px;  width: 150px; height: 150px; transform: rotate(-5deg); font-size: 28px; --tape-tilt: 4deg; }     /* SaaS = Dead?       */
+.title-postit.pos-stack-bot { top: 130px; left: 130px; width: 210px; height: 210px; transform: rotate(3deg);  font-size: 24px; --tape-tilt: -5deg; }   /* MarTech stack      */
+.title-postit.pos-side-tl   { top: 40px;  left: 290px; width: 180px; height: 180px; transform: rotate(-2deg); font-size: 26px; --tape-tilt: 3deg; z-index: 3; }    /* vibecode my tool? (behind the orange one) */
+.title-postit.pos-side-tr   { top: 20px;  right: 50px; width: 240px; height: 240px; transform: rotate(4deg);  font-size: 26px; --tape-tilt: -4deg; }   /* AI / job (longest) */
+
+/* ------- DOODLES ------- */
+.doodle {
+  position: absolute;
+  pointer-events: none;
+  z-index: 4;
+}
+.doodle-arrow-tl {
+  top: 250px;
+  left: 380px;
+  width: 220px;
+  height: 160px;
+  opacity: 0.9;
+  transform: rotate(8deg);
+}
+.doodle-arrow-tr {
+  top: 280px;
+  right: 380px;
+  width: 220px;
+  height: 160px;
+  opacity: 0.9;
+  transform: rotate(-12deg) scaleX(-1);
+}
+.doodle-arrow-bl {
+  bottom: 270px;
+  left: 380px;
+  width: 200px;
+  height: 150px;
+  opacity: 0.9;
+  transform: rotate(-18deg) scaleY(-1);
+}
+.doodle-arrow-br {
+  bottom: 260px;
+  right: 380px;
+  width: 200px;
+  height: 150px;
+  opacity: 0.9;
+  transform: rotate(15deg) scale(-1, -1);
+}
+
+/* hand-drawn rough circle around a word.
+   The SVG's path now fills the viewBox edge-to-edge, so when we stretch
+   the background, the ellipse stops at the wrapper's box. Margin-left
+   and margin-right keep neighbouring words clear of the circle. */
+.circled-word {
+  position: relative;
+  display: inline-block;
+  padding: 0 4px;
+  margin: 0 28px 0 6px;
+  z-index: 1;
+}
+.circled-word::before {
+  content: "";
+  position: absolute;
+  inset: -22px -28px -32px -18px;
+  /* One clean hand-drawn oval — the original circle-rough.svg path, which
+     already has natural pen-like imperfection in its Bezier curves. */
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 260 150' preserveAspectRatio='none' fill='none' stroke='%23c84a2e' stroke-width='5' stroke-linecap='round'><path vector-effect='non-scaling-stroke' d='M18 76 C19 28 78 13 134 18 C205 24 247 48 241 84 C234 129 161 143 93 132 C47 125 18 105 18 76 Z'/></svg>");
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  pointer-events: none;
+  z-index: -1;
+}
+/* smaller variant for inline caption-sized text */
+.circled-word.sm { padding: 0 4px; margin: 0 14px 0 4px; }
+.circled-word.sm::before { inset: -8px -8px -12px -8px; }
+
+/* underlined-word — inline emphasis with a rust line that exactly matches
+   the word width. Uses native CSS text-decoration so length tracks the
+   text precisely, no SVG-path math. */
+.underlined-word {
+  text-decoration: underline;
+  text-decoration-color: var(--accent-warm);
+  text-decoration-thickness: 4px;
+  text-underline-offset: 0.18em;
+  text-decoration-skip-ink: none;   /* line runs straight through descenders */
+}
+
+/* =====================================================================
+   SUBSLIDE
+   ===================================================================== */
+.step.subslide {
+  background: var(--bg-subslide);
+  color: #f3ede1;
+  padding: 60px;
+}
+
+/* =====================================================================
+   ENTER ANIMATIONS — keep template behavior
+   ===================================================================== */
+.step.section-A h1, .step.section-I h1,
+.step.section-A h2, .step.section-I h2,
+.step.section-A p, .step.section-I p {
+  opacity: 0;
+  transform: translateY(20px) rotate(var(--tilt, -1deg));
+  transition: opacity 0.9s, transform 0.9s;
+}
+.step.section-A h2, .step.section-I h2 { --tilt: 0.7deg; }
+.step.section-A p, .step.section-I p { --tilt: 0deg; }
+.step.section-A .meta, .step.section-I .meta {
+  opacity: 0; transform: translateY(12px);
+  transition: opacity 0.9s, transform 0.9s;
+}
+
+.step.active.section-A h1, .step.active.section-I h1,
+.step.active.section-A h2, .step.active.section-I h2,
+.step.active.section-A p, .step.active.section-I p {
+  opacity: 1;
+  transform: translateY(0) rotate(var(--tilt, -1deg));
+}
+.step.active.section-A .meta,
+.step.active.section-I .meta {
+  opacity: 0.75;
+  transform: translateY(0);
+}
+.step.section-A .meta, .step.section-I .meta { transition-delay: 0.25s; }
+.step.section-A h1, .step.section-I h1 { transition-delay: 0.4s; }
+.step.section-A h2, .step.section-I h2 { transition-delay: 0.6s; }
+.step.section-A p, .step.section-I p { transition-delay: 0.75s; }
+
+/* title enter */
+.step.title h1, .step.title h2 {
+  opacity: 0; transform: translateY(20px) rotate(var(--tilt, -1.5deg));
+  transition: opacity 1.4s, transform 1.4s;
+}
+.step.title .meta {
+  opacity: 0; transform: translateX(-50%) rotate(-1deg);
+  transition: opacity 1.4s;
+}
+.step.title.active h1 { opacity: 1; transform: translateY(0) rotate(-1.2deg); }
+.step.title.active h2 { opacity: 1; transform: translateY(0) rotate(-0.3deg); }
+.step.title.active .meta { opacity: 1; transform: translateX(-50%) rotate(-1deg); }
+.step.title .meta { transition-delay: 0.4s; }
+.step.title h1 { transition-delay: 0.7s; }
+.step.title h2 { transition-delay: 1.3s; }
+
+/* =====================================================================
+   SUBSTEPS — fade-in for marginalia / arrows / checkmarks
+   ===================================================================== */
+.substep {
+  opacity: 0;
+  transform: translateY(10px) rotate(var(--substep-tilt, 0deg));
+  transition: opacity 0.7s, transform 0.7s;
+}
+.substep.substep-visible {
+  opacity: 1;
+  transform: translateY(0) rotate(var(--substep-tilt, 0deg));
+}
+
+/* =====================================================================
+   CUSTOM BLOCKS — kept opacity transitions
+   ===================================================================== */
+.notebook-block { opacity: 0; transform: translateY(20px); transition: opacity 0.85s 0.7s, transform 0.85s 0.7s; }
+.step.active .notebook-block { opacity: 1; transform: translateY(0); }
+
+/* =====================================================================
+   SLIDE 1 — combined "personal lens × MarTech landscape"
+   ===================================================================== */
+/* slide 1 needs less vertical padding to fit the wider chart */
+#slide-1 { padding: 48px 80px; }
+
+/* Quiet chapter marker, top-left, faded handwritten style. Originally a slide-1
+   one-off; extended to other slides as we standardise the chapter marker look. */
+#slide-1 > .meta,
+#slide-2 > .meta,
+#slide-3 > .meta,
+#slide-4 > .meta,
+#slide-5 > .meta,
+#slide-6 > .meta,
+#slide-7 > .meta,
+#slide-8 > .meta,
+#slide-9 > .meta,
+#slide-10 > .meta,
+#slide-11 > .meta,
+#slide-12 > .meta,
+#slide-13 > .meta {
+  position: absolute;
+  top: 40px;
+  left: 60px;
+  font-family: var(--font-hand);
+  font-size: 22px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: none;
+  color: rgba(53,83,119,0.45);
+  opacity: 1;
+  text-align: left;
+  width: auto;
+  margin: 0;
+  transform: rotate(-1.5deg);
+}
+
+.s1-v2 {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  gap: 12px;
+  margin-top: 0;
+}
+
+.s1-v2-head {
+  text-align: center;
+  max-width: 1700px;
+}
+.s1-v2-head h1 {
+  font-family: var(--font-hand);
+  font-size: 88px;
+  font-weight: 500;
+  line-height: 1.0;
+  letter-spacing: 0;
+  color: var(--text-dark);
+  margin: 0 0 22px 0;
+  max-width: 1700px;
+  transform: rotate(-0.8deg);
+  text-shadow: none;
+}
+.s1-v2-head h1 .ink-rust { color: var(--accent-warm); font-weight: 700; }
+.s1-v2-head h2 {
+  font-family: var(--font-hand);
+  font-style: italic;
+  font-weight: 500;
+  font-size: 36px;
+  line-height: 1.4;
+  color: var(--text-dark);
+  margin: 56px auto 0;
+  max-width: 1500px;
+  text-transform: none;
+  letter-spacing: 0;
+  transform: none;
+}
+.s1-v2-head h2 em {
+  font-style: italic;
+  font-weight: 500;
+  color: var(--accent-warm);
+}
+
+.s1-v2-stage {
+  position: relative;
+  width: 1080px;
+  margin: 18px auto 0 auto;
+}
+/* Image-on-paper styling now lives in the reusable .paper-mat component
+   (see ~line 280). Slide 1 uses .paper-mat--lined. */
+/* annotation sits ABOVE the image's top-left, with a DOWN-arrow into the 2012 area */
+/* annotation sits well to the LEFT of the chart; arrow reaches PAST the
+   y-axis labels and lands on the 2011 column (chart's leftmost data column).
+   Coordinates calibrated against the rendered image rect. */
+.s1-v2-here {
+  position: absolute;
+  left: -210px;
+  top: 80px;
+  margin: 0;
+  font-family: var(--font-hand);
+  font-size: 30px;
+  font-weight: 500;
+  color: var(--accent-warm);
+  line-height: 1.05;
+  white-space: nowrap;
+  transform: rotate(-3deg);
+  z-index: 5;
+}
+.s1-v2-arrow {
+  position: absolute;
+  left: -175px;
+  top: 100px;
+  width: 280px;
+  height: 80px;
+  pointer-events: none;
+  z-index: 5;
+}
+
+.s1-v2-caption {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 400;
+  font-size: 30px;
+  line-height: 1.4;
+  color: var(--text-dark);
+  text-align: center;
+  max-width: 1500px;
+  margin: 40px auto 0 auto;   /* breathing room from the image */
+}
+.s1-v2-caption em {
+  font-style: italic;
+  font-weight: 500;
+  color: var(--accent-warm);
+}
+
+/* =====================================================================
+   SLIDE 2 — martech landscape, hand-frame around image, jotted numbers
+   ===================================================================== */
+.s2-landscape {
+  display: grid;
+  grid-template-columns: 1.3fr 0.7fr;
+  gap: 60px;
+  align-items: center;
+  width: 100%;
+  margin-top: 20px;
+}
+.s2-image-wrap {
+  position: relative;
+  height: 600px;
+}
+.s2-image-wrap .hand-frame {
+  height: 100%;
+}
+.s2-image-wrap .hand-frame img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 12px;
+  display: block;
+}
+.s2-image-wrap .img-arrow {
+  position: absolute;
+  font-family: var(--font-hand);
+  color: var(--accent-warm);
+  z-index: 4;
+}
+.s2-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+.jot-number {
+  font-family: var(--font-hand);
+  font-weight: 700;
+  font-size: 130px;
+  line-height: 0.9;
+  color: var(--accent-warm);
+  transform: rotate(-2deg);
+  display: block;
+}
+.jot-label {
+  font-family: var(--font-hand);
+  font-weight: 500;
+  font-size: 32px;
+  color: var(--text-dark);
+  margin-top: 6px;
+  display: block;
+  transform: rotate(-0.4deg);
+}
+.s2-note {
+  font-family: var(--font-body);
+  font-size: 24px;
+  line-height: 1.45;
+  color: var(--text-dark);
+  margin-top: 12px;
+}
+
+/* =====================================================================
+   SLIDE 2 (REDESIGN) — In choosing tools, we had two options.
+   Two post-its side by side: BUILD (orange) and BUY (cool blue).
+   Uses the .paper-mat component family with new colour variants.
+   ===================================================================== */
+#slide-2 h1 {
+  text-align: center;
+  font-family: var(--font-hand);
+  font-size: 88px;
+  font-weight: 500;
+  line-height: 1.05;
+  color: var(--text-dark);
+  margin: 0 auto;
+  max-width: 1700px;
+  transform: rotate(-0.4deg);
+}
+#slide-2 h1 .ink-rust {
+  color: var(--accent-warm);
+  font-weight: 700;
+}
+.s2bb {
+  display: flex;
+  gap: 100px;
+  justify-content: center;
+  align-items: stretch;
+  margin: 50px auto 0;
+  max-width: 1700px;
+}
+.s2bb .paper-mat {
+  width: 600px;
+  min-height: 660px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+.s2bb .paper-mat:nth-child(1) { --mat-tilt: -1.6deg; --tape-tilt: -3deg; }
+.s2bb .paper-mat:nth-child(2) { --mat-tilt: 1.2deg;  --tape-tilt: 2.2deg; }
+.s2bb-label {
+  font-family: var(--font-hand);
+  font-weight: 700;
+  font-size: 108px;
+  line-height: 0.95;
+  letter-spacing: 0.02em;
+  color: var(--accent-warm);
+  margin: 0 0 18px 0;
+}
+.paper-mat--blue .s2bb-label { color: var(--accent-cool); }
+.s2bb-punch {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 400;
+  font-size: 28px;
+  line-height: 1.4;
+  color: var(--text-dark);
+  margin: 0;
+}
+.s2bb-problem {
+  font-family: var(--font-hand);
+  font-weight: 500;
+  font-size: 24px;
+  letter-spacing: 0.02em;
+  color: rgba(26,24,20,0.55);
+  margin: 26px 0 4px 0;
+  transform: rotate(-1.4deg);
+  display: inline-block;
+}
+.s2bb-outcome {
+  font-family: var(--font-hand);
+  font-weight: 600;
+  font-size: 44px;
+  line-height: 1.15;
+  color: var(--text-dark);
+  margin: 0;
+  transform: rotate(-0.6deg);
+}
+.s2bb-outcome em {
+  font-style: normal;
+  color: var(--accent-warm);
+  font-weight: 700;
+}
+.paper-mat--blue .s2bb-outcome em { color: var(--accent-cool); }
+.s2bb-tag {
+  margin-top: auto;
+  padding-top: 18px;
+  border-top: 1.5px dashed rgba(26,24,20,0.22);
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: 16px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(26,24,20,0.60);
+}
+
+/* =====================================================================
+   SLIDE 3 (REDESIGN) — Every tool we buy: 1,000 features. We use 50.
+   Pill-grid visualisation (50 rust used + 950 grey unused), plus 5
+   black pills below for the features we actually need. The 1,000 child
+   .f pills are generated by JS at impress init time (see bottom script
+   block) to avoid 1,000 inline divs in the markup.
+   ===================================================================== */
+#slide-3 h1 {
+  text-align: center;
+  font-family: var(--font-hand);
+  font-size: 64px;
+  font-weight: 500;
+  line-height: 1.05;
+  color: var(--text-dark);
+  margin: 4px auto 0;
+  max-width: 1700px;
+  transform: rotate(-0.4deg);
+}
+#slide-3 h1 .ink-rust {
+  color: var(--accent-warm);
+  font-weight: 700;
+}
+#slide-3 .s3-why {
+  text-align: center;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 400;
+  font-size: 24px;
+  line-height: 1.4;
+  color: var(--text-dark);
+  margin: 16px auto 0;
+  max-width: 1400px;
+}
+#slide-3 .s3-why em {
+  font-style: italic;
+  font-weight: 500;
+  color: var(--accent-warm);
+}
+.s3-grid {
+  display: grid;
+  grid-template-columns: repeat(25, 1fr);
+  grid-auto-rows: 1fr;
+  gap: 4px;
+  width: 100%;
+  max-width: 1760px;
+  height: 430px;
+  margin: 20px auto 0;
+}
+.s3-grid .f {
+  border-radius: 3px;
+  background: rgba(26,24,20,0.10);
+  min-height: 0;
+  min-width: 0;
+}
+.s3-grid .f.used { background: var(--accent-warm); }
+.s3-needed-block {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 26px;
+  margin: 28px auto 0;
+}
+.s3-needed-label {
+  font-family: var(--font-hand);
+  font-weight: 500;
+  font-size: 26px;
+  letter-spacing: 0.02em;
+  color: rgba(26,24,20,0.65);
+  transform: rotate(-1.4deg);
+}
+.s3-needed-pills {
+  display: flex;
+  gap: 8px;
+}
+.s3-needed-pills .blackpill {
+  width: 22px;
+  height: 52px;
+  border-radius: 5px;
+  background: #1a1814;
+}
+#slide-3 .s3-options {
+  margin: 18px auto 0;
+  max-width: 1500px;
+}
+#slide-3 .s3-options-title {
+  text-align: center;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 400;
+  font-size: 26px;
+  color: var(--text-dark);
+  margin: 0 0 8px 0;
+}
+#slide-3 .s3-option-row {
+  display: grid;
+  grid-template-columns: 1fr 56px 1fr;
+  gap: 14px;
+  align-items: baseline;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 22px;
+  line-height: 1.4;
+  color: var(--text-dark);
+  margin: 0;
+}
+#slide-3 .s3-option-act {
+  text-align: right;
+  font-weight: 400;
+}
+#slide-3 .s3-option-act .em-cool { color: var(--accent-cool); font-weight: 700; font-style: italic; }
+#slide-3 .s3-option-act .em-rust { color: var(--accent-warm); font-weight: 700; font-style: italic; }
+#slide-3 .s3-option-act .em-dark { color: var(--text-dark); font-weight: 700; font-style: italic; }
+#slide-3 .s3-option-arrow {
+  text-align: center;
+  font-family: var(--font-hand);
+  font-size: 28px;
+  color: rgba(26,24,20,0.45);
+  font-style: normal;
+}
+#slide-3 .s3-option-fail {
+  text-align: left;
+  color: var(--accent-warm);
+  font-weight: 500;
+}
+.s3-source {
+  position: absolute;
+  bottom: 56px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: var(--font-body);
+  font-style: italic;
+  font-size: 13px;
+  color: rgba(26,24,20,0.42);
+  letter-spacing: 0.02em;
+}
+
+/* =====================================================================
+   SLIDE 3 (LEGACY) — BUILD vs BUY, two hand-drawn boxes
+   Kept for reference; not used by current #slide-3 markup.
+   ===================================================================== */
+.bb-split {
+  display: grid;
+  grid-template-columns: 1fr 100px 1fr;
+  gap: 30px;
+  align-items: center;
+  width: 100%;
+  margin-top: 40px;
+  height: 520px;
+}
+.bb-box {
+  position: relative;
+  height: 100%;
+  padding: 44px 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.bb-box::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border: 4px solid var(--text-dark);
+  border-radius: 24px 18px 30px 22px / 20px 28px 18px 24px;
+  pointer-events: none;
+}
+.bb-box.dark {
+  background: rgba(26,24,20,0.05);
+}
+.bb-box.dark::before {
+  border-color: var(--text-dark);
+}
+.bb-box.light::before {
+  border-color: var(--accent-warm);
+  border-style: solid;
+}
+.bb-label {
+  font-family: var(--font-hand);
+  font-weight: 700;
+  font-size: 132px;
+  line-height: 0.9;
+  letter-spacing: 0.02em;
+  color: var(--text-dark);
+  transform: rotate(-1.4deg);
+}
+.bb-box.light .bb-label { color: var(--accent-warm); transform: rotate(1.4deg); }
+.bb-line {
+  font-family: var(--font-hand);
+  font-size: 46px;
+  font-weight: 500;
+  line-height: 1.1;
+  color: var(--text-dark);
+  margin-top: 24px;
+}
+.bb-trade {
+  font-family: var(--font-body);
+  font-size: 22px;
+  line-height: 1.45;
+  color: var(--text-muted);
+  margin-top: 20px;
+  position: relative;
+}
+.bb-trade.strike {
+  text-decoration: line-through;
+  text-decoration-color: var(--accent-warm);
+  text-decoration-thickness: 3px;
+  text-decoration-skip-ink: none;
+}
+.bb-vs {
+  font-family: var(--font-hand);
+  font-weight: 700;
+  font-size: 108px;
+  color: var(--accent-warm);
+  text-align: center;
+  transform: rotate(-6deg);
+}
+
+/* =====================================================================
+   SLIDE 4 (REDESIGN) — Big rhetorical pivot question.
+   "What if this is all changing — fast — with the maturity of AI?"
+   ===================================================================== */
+#slide-4 .s4q-block {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100%;
+  max-width: 1500px;
+  text-align: center;
+}
+#slide-4 .s4q-question {
+  font-family: var(--font-hand);
+  font-size: 104px;
+  font-weight: 500;
+  line-height: 1.1;
+  color: var(--text-dark);
+  margin: 0;
+  transform: rotate(-0.4deg);
+  letter-spacing: -0.005em;
+}
+#slide-4 .s4q-question .em-rust { color: var(--accent-warm); font-weight: 700; }
+#slide-4 .s4q-postit {
+  position: absolute;
+  right: 110px;
+  bottom: 130px;
+  width: 520px;
+  padding: 34px 36px 32px 36px;
+  --mat-tilt: -2.6deg;
+  --tape-tilt: -5deg;
+  z-index: 4;
+}
+#slide-4 .s4q-postit-text {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 400;
+  font-size: 26px;
+  line-height: 1.4;
+  color: #2a221a;
+  text-align: left;
+  margin: 0;
+}
+#slide-4 .s4q-postit-text em {
+  font-style: italic;
+  font-weight: 700;
+  color: var(--text-dark);
+}
+#slide-4 .s4q-postit-tag {
+  display: block;
+  font-family: var(--font-hand);
+  font-weight: 500;
+  font-size: 22px;
+  letter-spacing: 0.01em;
+  color: rgba(42,34,26,0.65);
+  margin: 0 0 8px 0;
+  transform: rotate(-1.5deg);
+}
+
+/* =====================================================================
+   SLIDE 4 (LEGACY) — feature checklist
+   ===================================================================== */
+.s4-grid {
+  display: grid;
+  grid-template-columns: 1fr 0.95fr;
+  gap: 70px;
+  align-items: center;
+  width: 100%;
+  margin-top: 20px;
+}
+.checklist {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  column-gap: 24px;
+  row-gap: 10px;
+  font-family: var(--font-hand);
+  font-size: 26px;
+  color: var(--text-dark);
+}
+.checklist .item {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  line-height: 1.1;
+}
+.checklist .tick {
+  font-family: var(--font-hand);
+  font-size: 30px;
+  color: var(--accent-warm);
+  line-height: 1;
+  flex-shrink: 0;
+}
+.checklist .item.unchecked .tick { color: var(--text-muted); opacity: 0.5; }
+.checklist .item.unchecked .label { color: var(--text-muted); opacity: 0.6; }
+.checklist .item.highlight {
+  position: relative;
+  color: var(--accent-warm);
+  font-weight: 700;
+}
+.checklist .item.highlight .tick { color: var(--accent-warm); }
+.checklist .more {
+  grid-column: 1 / -1;
+  margin-top: 16px;
+  font-family: var(--font-hand);
+  font-size: 32px;
+  color: var(--text-muted);
+  font-style: italic;
+  transform: rotate(-1deg);
+}
+.s4-copy h1 {
+  font-size: 110px;
+  margin-bottom: 18px;
+}
+.s4-bignum {
+  font-family: var(--font-hand);
+  font-weight: 700;
+  font-size: 140px;
+  color: var(--accent-warm);
+  line-height: 0.9;
+  transform: rotate(-3deg);
+  display: inline-block;
+  margin-top: 14px;
+}
+.s4-ask {
+  font-family: var(--font-hand);
+  font-weight: 500;
+  font-size: 48px;
+  line-height: 1.06;
+  color: var(--text-dark);
+  margin-top: 12px;
+  max-width: 720px;
+  transform: rotate(-0.5deg);
+}
+.s4-source {
+  font-family: var(--font-body);
+  font-size: 16px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-top: 28px;
+}
+.s4-source em {
+  font-family: var(--font-display);
+  font-style: italic;
+  text-transform: none;
+  letter-spacing: 0;
+  color: var(--accent-warm);
+  font-size: 19px;
+}
+
+/* =====================================================================
+   SLIDE 5 — code is cheap / requirements are expensive
+   ===================================================================== */
+/* SLIDE 5 — top headers grid + bottom post-it pair.
+   .s5-top: two-column grid, headers in row 1 (top-aligned), notes in row 2
+   at the same baseline regardless of header wrap. Bottleneck note is now
+   on a separate post-it bottom-left (see further down). */
+.s5-top {
+  display: grid;
+  grid-template-columns: 1fr 1.18fr;
+  grid-template-rows: auto auto;
+  column-gap: 80px;
+  row-gap: 28px;
+  width: 100%;
+  max-width: 1500px;
+  margin: 180px auto 0;
+}
+.s5-top-header {
+  font-family: var(--font-hand);
+  font-weight: 700;
+  font-size: 108px;
+  line-height: 0.96;
+  color: var(--text-dark);
+  align-self: start;
+  margin: 0;
+}
+.s5-top-header-left  { grid-row: 1; grid-column: 1; transform: rotate(-1.5deg); }
+.s5-top-header-right { grid-row: 1; grid-column: 2; transform: rotate(1.2deg); }
+.s5-top-note {
+  font-family: var(--font-body);
+  font-size: 24px;
+  line-height: 1.45;
+  color: var(--text-muted);
+  align-self: start;
+  margin: 0;
+  max-width: 580px;
+}
+.s5-top-note-left  { grid-row: 2; grid-column: 1; }
+.s5-top-note-right { grid-row: 2; grid-column: 2; }
+
+/* Slide-5 bottom post-it pair — left (blue, focus question) and right
+   (orange, build payoff). Same width and baseline, opposing tilts. */
+#slide-5 .s5-postit {
+  position: absolute;
+  bottom: 110px;
+  width: 540px;
+  padding: 30px 34px 30px 34px;
+  z-index: 4;
+}
+#slide-5 .s5-postit-left {
+  left: 110px;
+  --mat-tilt: -2.4deg;
+  --tape-tilt: -4deg;
+}
+#slide-5 .s5-postit-right {
+  right: 110px;
+  --mat-tilt: 2.2deg;
+  --tape-tilt: 4deg;
+}
+#slide-5 .s5-postit-tag {
+  display: block;
+  font-family: var(--font-hand);
+  font-weight: 700;
+  font-size: 32px;
+  letter-spacing: 0.01em;
+  color: #2a221a;
+  margin: 0 0 12px 0;
+  transform: rotate(-1.5deg);
+}
+#slide-5 .s5-postit-text {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 400;
+  font-size: 26px;
+  line-height: 1.35;
+  color: #2a221a;
+  margin: 0;
+}
+#slide-5 .s5-postit-text .build {
+  font-family: var(--font-hand);
+  font-style: normal;
+  font-weight: 700;
+  color: var(--accent-warm);
+  font-size: 1.15em;
+  letter-spacing: 0.01em;
+}
+#slide-5 .s5-postit-text em {
+  font-style: italic;
+  font-weight: 700;
+  color: var(--text-dark);
+}
+
+/* =====================================================================
+   SLIDE 6 (REDESIGN) — two big post-its: old vs new decision process.
+   Hand-drawn tick boxes per question. Same circle/underline highlights
+   on the headline as slides 4 & 5.
+   ===================================================================== */
+#slide-6 .s6-headline {
+  font-family: var(--font-hand);
+  font-size: 88px;
+  font-weight: 700;
+  line-height: 1.05;
+  margin: 24px auto 0;
+  color: var(--text-dark);
+  text-align: center;
+  max-width: 1600px;
+  transform: rotate(-0.4deg);
+}
+.s6-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  margin: 90px auto 0;
+  max-width: 1560px;
+  align-items: stretch;
+}
+.s6-grid .paper-mat {
+  position: relative;
+  padding: 48px 50px 46px 50px;
+  display: flex;
+  flex-direction: column;
+}
+.s6-grid .paper-mat:nth-child(1) { --mat-tilt: -1.4deg; --tape-tilt: -3deg; }
+.s6-grid .paper-mat:nth-child(2) { --mat-tilt: 1.2deg;  --tape-tilt: 2.8deg; }
+#slide-6 .s6-postit-title {
+  font-family: var(--font-hand);
+  font-weight: 700;
+  font-size: 72px;
+  line-height: 1;
+  margin: 0 0 6px 0;
+  color: var(--accent-warm);
+  letter-spacing: 0.01em;
+}
+#slide-6 .paper-mat--blue .s6-postit-title { color: var(--accent-cool); }
+#slide-6 .s6-postit-subtitle {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 400;
+  font-size: 24px;
+  color: rgba(42,34,26,0.7);
+  margin: 0 0 30px 0;
+}
+#slide-6 .s6-tick-list {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+#slide-6 .tick-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 18px;
+  font-family: var(--font-body);
+  font-size: 25px;
+  line-height: 1.35;
+  color: #2a221a;
+}
+/* Hand-drawn tick box — inline SVG with a deliberately imperfect quadrilateral.
+   Stroke variation + per-item rotation makes the column read as written,
+   not printed. The path corners are off true 90° to feel pen-drawn. */
+#slide-6 .tickbox {
+  flex: none;
+  width: 32px;
+  height: 32px;
+  margin-top: 4px;
+}
+#slide-6 .tickbox path {
+  vector-effect: non-scaling-stroke;
+}
+#slide-6 .tick-item:nth-child(1) .tickbox { transform: rotate(-3deg); }
+#slide-6 .tick-item:nth-child(2) .tickbox { transform: rotate(2deg); }
+#slide-6 .tick-item:nth-child(3) .tickbox { transform: rotate(-1.4deg); }
+#slide-6 .tick-item:nth-child(4) .tickbox { transform: rotate(2.6deg); }
+#slide-6 .tick-item:nth-child(5) .tickbox { transform: rotate(-0.8deg); }
+
+/* =====================================================================
+   SLIDE 6 (LEGACY) — decision process: two journal pages
+   ===================================================================== */
+.process-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  width: 100%;
+  margin-top: 20px;
+}
+.journal-page {
+  position: relative;
+  padding: 36px 38px 30px;
+  background: rgba(255,247,232,0.5);
+  border-radius: 6px;
+  box-shadow: 0 8px 24px rgba(26,24,20,0.08);
+  transform: rotate(-0.6deg);
+}
+.journal-page.right { transform: rotate(0.6deg); background: rgba(255,247,232,0.65); }
+.journal-page::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border: 2.5px solid var(--text-dark);
+  border-radius: 10px 8px 12px 9px;
+  opacity: 0.7;
+  pointer-events: none;
+}
+.journal-page.right::before { border-color: var(--accent-warm); opacity: 0.85; }
+.journal-page h3 {
+  font-family: var(--font-hand);
+  font-weight: 700;
+  font-size: 60px;
+  line-height: 1;
+  margin: 0 0 22px 0;
+  color: var(--text-dark);
+  transform: rotate(-1deg);
+  display: inline-block;
+}
+.journal-page.right h3 { color: var(--accent-warm); transform: rotate(0.8deg); }
+.journal-page ol {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  counter-reset: jp;
+}
+.journal-page li {
+  font-family: var(--font-body);
+  font-size: 24px;
+  line-height: 1.32;
+  margin-bottom: 14px;
+  padding-left: 50px;
+  position: relative;
+  counter-increment: jp;
+}
+.journal-page li::before {
+  content: counter(jp) ".";
+  position: absolute;
+  left: 8px;
+  top: 0;
+  font-family: var(--font-hand);
+  font-weight: 600;
+  font-size: 30px;
+  color: var(--text-muted);
+  line-height: 1.1;
+}
+.journal-page.right li::before { color: var(--accent-warm); }
+.journal-page li.star::after {
+  content: "★";
+  position: absolute;
+  right: -8px;
+  top: -4px;
+  font-size: 36px;
+  color: var(--accent-warm);
+  transform: rotate(-12deg);
+}
+
+/* =====================================================================
+   SLIDE 7 (REDESIGN v2) — Stop buying packages. Take the parts.
+   Left: body text explaining the infrastructure framing.
+   Right: 3 real-named SaaS containers, each holding a coloured pill grid
+   (slide-3 aesthetic). Below: "your workflow" box with mixed-colour pills
+   showing parts assembled from each source.
+   ===================================================================== */
+#slide-7 .s7-headline {
+  font-family: var(--font-hand);
+  font-size: 80px;
+  font-weight: 700;
+  line-height: 1.05;
+  margin: 16px auto 0;
+  color: var(--text-dark);
+  text-align: center;
+  max-width: 1600px;
+  transform: rotate(-0.4deg);
+}
+.s7-stage {
+  display: grid;
+  grid-template-columns: 1fr 1.4fr;
+  gap: 60px;
+  align-items: center;
+  width: 100%;
+  max-width: 1780px;
+  margin: 36px auto 0;
+}
+/* LEFT body */
+#slide-7 .s7-body {
+  max-width: 760px;
+}
+#slide-7 .s7-body p {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 400;
+  font-size: 38px;
+  line-height: 1.4;
+  color: var(--text-dark);
+  margin: 0 0 24px 0;
+  max-width: none;
+}
+#slide-7 .s7-body em {
+  font-style: italic;
+  font-weight: 700;
+  color: var(--accent-warm);
+}
+#slide-7 .s7-body .underline-warm {
+  font-style: italic;
+  font-weight: 700;
+  color: var(--accent-warm);
+}
+#slide-7 .s7-body .s7-ai-note {
+  font-size: 28px;
+  color: rgba(26,24,20,0.55);
+  margin-top: 36px;
+  margin-bottom: 0;
+}
+/* RIGHT visual */
+.s7-visual {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.s7-saas-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 22px;
+}
+.s7-saas {
+  border: 2.5px solid #2a221a;
+  border-radius: 6px 4px 7px 5px;
+  background: rgba(255,255,255,0.55);
+  box-shadow: 4px 5px 0 rgba(26,24,20,0.08);
+  overflow: hidden;
+}
+.s7-saas:nth-child(1) { transform: rotate(-1.4deg); }
+.s7-saas:nth-child(2) { transform: rotate(0.8deg); }
+.s7-saas:nth-child(3) { transform: rotate(-0.6deg); }
+/* Coloured header strip per SaaS — gives each package identity */
+.s7-saas-label {
+  font-family: var(--font-hand);
+  font-weight: 700;
+  font-size: 36px;
+  text-align: center;
+  padding: 16px 14px 14px;
+  margin: 0;
+  color: #fefdf3;
+  border-bottom: 2.5px solid #2a221a;
+  letter-spacing: 0.01em;
+}
+.s7-saas--rust   .s7-saas-label { background: var(--accent-warm); }
+.s7-saas--cool   .s7-saas-label { background: var(--accent-cool); }
+.s7-saas--yellow .s7-saas-label { background: #b8924a; }
+.s7-saas-inner { padding: 14px 14px 16px; }
+.s7-pills {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 5px;
+}
+.s7-pill {
+  aspect-ratio: 1 / 0.55;
+  border-radius: 3px;
+}
+.s7-pill.rust   { background: var(--accent-warm); }
+.s7-pill.cool   { background: var(--accent-cool); }
+.s7-pill.yellow { background: #d4a85a; }
+.s7-pill.empty  { background: rgba(26,24,20,0.10); }
+/* Three column-aligned dashed arrows linking each SaaS to the workflow below */
+.s7-flow {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 22px;
+  margin: 4px 0;
+}
+.s7-flow .s7-flow-col {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.s7-flow svg {
+  width: 36px;
+  height: 36px;
+  opacity: 0.55;
+}
+/* Workflow box — same width as the SaaS row above; matches the visual area */
+.s7-workflow {
+  position: relative;
+  border: 3px solid var(--accent-warm);
+  border-radius: 7px 5px 8px 6px;
+  padding: 20px 26px 24px;
+  background: rgba(246, 193, 136, 0.22);
+  box-shadow: 5px 6px 0 rgba(26,24,20,0.12);
+  transform: rotate(0.4deg);
+}
+.s7-workflow-label {
+  font-family: var(--font-hand);
+  font-weight: 700;
+  font-size: 44px;
+  text-align: center;
+  margin: 0 0 16px 0;
+  color: var(--accent-warm);
+  letter-spacing: 0.01em;
+}
+.s7-workflow .s7-pills {
+  grid-template-columns: repeat(12, 1fr);
+  gap: 6px;
+}
+#slide-7 .s7-tagline {
+  margin: 96px auto 0;
+  text-align: center;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 400;
+  font-size: 48px;
+  line-height: 1.3;
+  color: rgba(26,24,20,0.7);
+  max-width: 1600px;
+}
+#slide-7 .s7-tagline em {
+  font-style: italic;
+  font-weight: 700;
+  color: var(--accent-warm);
+}
+#slide-7 .s7-tagline .s7-tagline-sub {
+  display: block;
+  font-size: 28px;
+  color: rgba(26,24,20,0.5);
+  margin-top: 8px;
+}
+
+/* =====================================================================
+   SLIDE 7 (LEGACY) — buildable foundation pyramid (hand-drawn)
+   ===================================================================== */
+.foundation-grid {
+  display: grid;
+  grid-template-columns: 0.9fr 1.1fr;
+  gap: 60px;
+  align-items: center;
+  width: 100%;
+  margin-top: 30px;
+}
+.foundation-question h1 {
+  font-size: 96px;
+  line-height: 0.96;
+  margin-bottom: 24px;
+}
+.foundation-question p {
+  font-size: 26px;
+  line-height: 1.45;
+  max-width: 720px;
+}
+.foundation-question p em {
+  font-family: var(--font-display);
+  font-style: italic;
+  color: var(--accent-warm);
+  font-weight: 500;
+}
+.hand-pyramid {
+  display: flex;
+  flex-direction: column-reverse;
+  gap: 14px;
+}
+.pyr-layer {
+  position: relative;
+  padding: 24px 36px;
+  font-family: var(--font-hand);
+  font-weight: 600;
+  font-size: 44px;
+  line-height: 1;
+  color: var(--text-dark);
+  background: rgba(255,247,232,0.55);
+  border-radius: 10px 8px 14px 9px;
+  box-shadow: 0 6px 20px rgba(26,24,20,0.08);
+  transform: rotate(-0.5deg);
+}
+.pyr-layer::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border: 3px solid var(--text-dark);
+  border-radius: 12px 10px 16px 11px;
+  pointer-events: none;
+}
+.pyr-layer:nth-child(1) { width: 72%; }
+.pyr-layer:nth-child(2) { width: 84%; margin-left: 6%; transform: rotate(0.5deg); }
+.pyr-layer:nth-child(2)::before { border-color: var(--accent-cool); }
+.pyr-layer:nth-child(3) { width: 92%; margin-left: 11%; transform: rotate(-0.8deg); }
+.pyr-layer:nth-child(3)::before { border-color: var(--accent-warm); }
+.pyr-layer:nth-child(4) { width: 100%; margin-left: 17%; transform: rotate(0.6deg); }
+
+.pyramid-margin-note {
+  position: absolute;
+  right: -160px;
+  top: 40%;
+  font-family: var(--font-hand);
+  font-size: 32px;
+  color: var(--accent-warm);
+  font-weight: 600;
+  line-height: 1.1;
+  width: 230px;
+  transform: rotate(-3deg);
+}
+
+/* =====================================================================
+   SLIDE 8 (REDESIGN) — intro to the two examples. Two big post-its —
+   strong foundation (orange) and weak fit (blue) — with a forward
+   reference to the next slides. Tagline ties back to the headless beat.
+   ===================================================================== */
+#slide-8 .s8-headline {
+  font-family: var(--font-hand);
+  font-size: 84px;
+  font-weight: 700;
+  line-height: 1.05;
+  margin: 20px auto 0;
+  color: var(--text-dark);
+  text-align: center;
+  max-width: 1700px;
+  transform: rotate(-0.4deg);
+}
+.s8-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  margin: 60px auto 0;
+  max-width: 1620px;
+  align-items: stretch;
+}
+.s8-grid .paper-mat {
+  position: relative;
+  padding: 44px 48px 40px 48px;
+  display: flex;
+  flex-direction: column;
+  min-height: 600px;
+}
+.s8-grid .paper-mat:nth-child(1) { --mat-tilt: -1.4deg; --tape-tilt: -3deg; }
+.s8-grid .paper-mat:nth-child(2) { --mat-tilt: 1.2deg;  --tape-tilt: 2.8deg; }
+#slide-8 .s8-postit-title {
+  font-family: var(--font-hand);
+  font-weight: 700;
+  font-size: 72px;
+  line-height: 1;
+  margin: 0 0 10px 0;
+  color: var(--accent-warm);
+  letter-spacing: 0.01em;
+}
+#slide-8 .paper-mat--mint .s8-postit-title { color: #3d6b3e; }
+#slide-8 .paper-mat--rose .s8-postit-title { color: var(--accent-warm); }
+#slide-8 .s8-postit-subtitle {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 400;
+  font-size: 28px;
+  color: rgba(42,34,26,0.7);
+  margin: 0 0 36px 0;
+}
+#slide-8 .s8-body {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+#slide-8 .s8-body p {
+  font-family: var(--font-hand);
+  font-weight: 500;
+  font-size: 34px;
+  line-height: 1.35;
+  color: #2a221a;
+  margin: 0;
+}
+#slide-8 .s8-next {
+  margin-top: auto;
+  padding-top: 22px;
+  font-family: var(--font-hand);
+  font-weight: 600;
+  font-size: 30px;
+  color: rgba(42,34,26,0.7);
+  border-top: 1.5px dashed rgba(42,34,26,0.25);
+}
+#slide-8 .s8-next em {
+  font-style: normal;
+  color: var(--accent-warm);
+  font-weight: 700;
+}
+#slide-8 .paper-mat--mint .s8-next em { color: #3d6b3e; }
+#slide-8 .s8-tagline {
+  margin: 60px auto 0;
+  text-align: center;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 400;
+  font-size: 38px;
+  line-height: 1.35;
+  color: rgba(26,24,20,0.7);
+  max-width: 1600px;
+}
+#slide-8 .s8-tagline em {
+  font-style: italic;
+  font-weight: 700;
+  color: var(--accent-warm);
+}
+#slide-8 .s8-tagline .s8-tagline-sub {
+  display: block;
+  font-size: 28px;
+  color: rgba(26,24,20,0.55);
+  margin-top: 6px;
+}
+
+/* =====================================================================
+   SLIDE 8 (LEGACY) — diagnostic flowchart fork
+   ===================================================================== */
+.fork-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 60px;
+  width: 100%;
+  margin-top: 30px;
+}
+.fork-q {
+  font-family: var(--font-hand);
+  font-weight: 700;
+  font-size: 68px;
+  line-height: 1.05;
+  color: var(--text-dark);
+  text-align: center;
+  margin: 20px 0 32px 0;
+  grid-column: 1 / -1;
+  transform: rotate(-0.5deg);
+}
+.fork-branch {
+  position: relative;
+  padding: 40px 36px 38px;
+  min-height: 460px;
+  display: flex;
+  flex-direction: column;
+}
+.fork-branch::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border: 3.5px solid var(--text-dark);
+  border-radius: 22px 18px 26px 20px;
+  pointer-events: none;
+}
+.fork-branch.warm::before { border-color: var(--accent-warm); }
+.fork-branch.dark {
+  background: rgba(26,24,20,0.92);
+  color: #f3ede1;
+}
+.fork-branch.dark::before { border-color: rgba(243,237,225,0.5); }
+.fork-arrow {
+  font-family: var(--font-hand);
+  font-size: 44px;
+  font-weight: 700;
+  color: var(--accent-warm);
+  margin-bottom: 12px;
+  transform: rotate(-1.5deg);
+}
+.fork-branch.dark .fork-arrow { color: #f3ede1; }
+.fork-branch h3 {
+  font-family: var(--font-hand);
+  font-weight: 600;
+  font-size: 54px;
+  line-height: 1.02;
+  margin: 0 0 18px 0;
+}
+.fork-branch p {
+  font-family: var(--font-body);
+  font-size: 22px;
+  line-height: 1.4;
+  margin: 0 0 14px 0;
+  color: inherit;
+  opacity: 0.85;
+}
+.fork-action {
+  font-family: var(--font-hand);
+  font-weight: 700;
+  font-size: 60px;
+  color: var(--accent-warm);
+  margin-top: auto;
+  transform: rotate(-1deg);
+}
+.fork-branch.dark .fork-action { color: #f3ede1; }
+
+/* =====================================================================
+   SLIDE 9 (REDESIGN) — Example 1: Build on top of strong foundation.
+   Left column: scenario bullets + two grouped block boxes (KEPT in cool
+   blue, REBUILT in rust). Right column: real custom-dashboard screenshot
+   sitting inside a yellow paper-mat post-it (slide-1 image treatment).
+   ===================================================================== */
+#slide-9 .s9-header {
+  text-align: left;
+  margin: 20px auto 0;
+  max-width: 1760px;
+}
+#slide-9 .s9-headline {
+  font-family: var(--font-hand);
+  font-size: 96px;
+  font-weight: 700;
+  line-height: 1.05;
+  color: var(--text-dark);
+  margin: 0;
+  transform: rotate(-0.4deg);
+}
+#slide-9 .s9-headline .underline-warm {
+  font-style: normal;
+  font-weight: 700;
+}
+#slide-9 .s9-subtitle {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 400;
+  font-size: 32px;
+  line-height: 1.4;
+  color: rgba(26,24,20,0.7);
+  margin: 14px 0 0 0;
+  max-width: 1400px;
+}
+#slide-9 .s9-subtitle em {
+  font-style: italic;
+  font-weight: 700;
+  color: var(--accent-warm);
+}
+.s9-stage {
+  display: grid;
+  grid-template-columns: 0.5fr 1fr;
+  gap: 50px;
+  align-items: stretch;
+  width: 100%;
+  max-width: 1780px;
+  margin: 38px auto 0;
+}
+#slide-9 .s9-left {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+#slide-9 .s9-body {
+  font-family: var(--font-hand);
+  font-weight: 500;
+  font-size: 30px;
+  line-height: 1.35;
+  color: #2a221a;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+#slide-9 .s9-body p {
+  font-family: var(--font-hand);
+  font-size: 30px;
+  line-height: 1.35;
+  color: #2a221a;
+  margin: 0;
+}
+/* Block group boxes */
+.s9-group {
+  position: relative;
+  padding: 22px 24px 22px 24px;
+  border: 2.5px dashed rgba(26,24,20,0.4);
+  border-radius: 8px 6px 7px 5px;
+}
+.s9-group--kept   { background: rgba(216, 228, 240, 0.35); }
+.s9-group--rebuilt { background: rgba(246, 193, 136, 0.30); }
+.s9-group-label {
+  font-family: var(--font-hand);
+  font-weight: 700;
+  font-size: 26px;
+  letter-spacing: 0.02em;
+  text-transform: lowercase;
+  color: rgba(26,24,20,0.65);
+  margin: 0 0 14px 0;
+  transform: rotate(-1.4deg);
+  display: inline-block;
+}
+.s9-group--kept   .s9-group-label { color: var(--accent-cool); }
+.s9-group--rebuilt .s9-group-label { color: var(--accent-warm); }
+.s9-blocks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.s9-block {
+  padding: 12px 18px;
+  font-family: var(--font-hand);
+  font-weight: 600;
+  font-size: 26px;
+  color: #2a221a;
+  border: 2.5px solid #2a221a;
+  border-radius: 5px 4px 6px 5px;
+  box-shadow: 3px 4px 0 rgba(26,24,20,0.10);
+  white-space: nowrap;
+}
+.s9-group--kept   .s9-block { background: rgba(216, 228, 240, 0.85); }
+.s9-group--rebuilt .s9-block { background: rgba(246, 193, 136, 0.85); }
+.s9-blocks .s9-block:nth-child(1) { transform: rotate(-1.6deg); }
+.s9-blocks .s9-block:nth-child(2) { transform: rotate(1.2deg); }
+.s9-blocks .s9-block:nth-child(3) { transform: rotate(-0.8deg); }
+.s9-blocks .s9-block:nth-child(4) { transform: rotate(1.8deg); }
+.s9-blocks .s9-block:nth-child(5) { transform: rotate(-1.2deg); }
+.s9-blocks .s9-block:nth-child(6) { transform: rotate(2deg); }
+.s9-blocks .s9-block:nth-child(7) { transform: rotate(-1.4deg); }
+/* RIGHT side — screenshot post-it */
+.s9-shot {
+  align-self: start;
+  width: 100%;
+  padding: 28px 24px 26px 24px;
+  --mat-tilt: 0.6deg;
+  --tape-tilt: -2deg;
+}
+.s9-shot img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 2px;
+}
+.s9-shot-caption {
+  margin: 14px 0 0 0;
+  font-family: var(--font-hand);
+  font-weight: 500;
+  font-size: 24px;
+  color: rgba(42,34,26,0.65);
+  text-align: center;
+  font-style: normal;
+}
+/* Bottom takeaway */
+#slide-9 .s9-takeaway {
+  margin: 40px auto 0;
+  text-align: center;
+  font-family: var(--font-hand);
+  font-weight: 700;
+  font-size: 52px;
+  line-height: 1.1;
+  color: var(--text-dark);
+  transform: rotate(-0.4deg);
+}
+#slide-9 .s9-takeaway .circled {
+  color: var(--accent-warm);
+}
+
+/* =====================================================================
+   SLIDE 10 (REDESIGN) — Example 2: stop overpaying for a huge SaaS.
+   Mirrors slide 9's layout (left column body, right column screenshot)
+   but replaces the kept/rebuilt boxes with a 5-feature pill callback
+   (slide 3's "5 we want" pills, now rust = "5 we built").
+   ===================================================================== */
+#slide-10 .s10-header {
+  text-align: left;
+  margin: 20px auto 0;
+  max-width: 1780px;
+}
+#slide-10 .s10-headline {
+  font-family: var(--font-hand);
+  font-size: 96px;
+  font-weight: 700;
+  line-height: 1.05;
+  color: var(--text-dark);
+  margin: 0;
+  transform: rotate(-0.4deg);
+}
+#slide-10 .s10-headline .underline-warm {
+  font-style: normal;
+  font-weight: 700;
+}
+.s10-stage {
+  display: grid;
+  grid-template-columns: 0.5fr 1fr;
+  gap: 50px;
+  align-items: stretch;
+  width: 100%;
+  max-width: 1780px;
+  margin: 38px auto 0;
+}
+#slide-10 .s10-left {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+#slide-10 .s10-body {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+#slide-10 .s10-body p {
+  font-family: var(--font-hand);
+  font-size: 30px;
+  line-height: 1.35;
+  color: #2a221a;
+  margin: 0;
+  font-weight: 500;
+}
+/* 5-feature pill row — callback to slide 3's black pills, now rust */
+.s10-features {
+  position: relative;
+  padding: 20px 24px 24px;
+  border: 2.5px dashed rgba(26,24,20,0.4);
+  border-radius: 8px 6px 7px 5px;
+  background: rgba(246, 193, 136, 0.15);
+}
+.s10-features-label {
+  font-family: var(--font-hand);
+  font-weight: 700;
+  font-size: 26px;
+  letter-spacing: 0.02em;
+  color: var(--accent-warm);
+  margin: 0 0 18px 0;
+  transform: rotate(-1.4deg);
+  display: inline-block;
+}
+.s10-pills {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 10px;
+  align-items: end;
+}
+.s10-pill {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+.s10-pill-shape {
+  width: 24px;
+  height: 52px;
+  border-radius: 4px;
+  background: var(--accent-warm);
+  box-shadow: 2px 3px 0 rgba(26,24,20,0.10);
+}
+.s10-pill:nth-child(1) .s10-pill-shape { transform: rotate(-2.2deg); }
+.s10-pill:nth-child(2) .s10-pill-shape { transform: rotate(1.5deg); }
+.s10-pill:nth-child(3) .s10-pill-shape { transform: rotate(-1deg); }
+.s10-pill:nth-child(4) .s10-pill-shape { transform: rotate(2deg); }
+.s10-pill:nth-child(5) .s10-pill-shape { transform: rotate(-0.6deg); }
+.s10-pill-label {
+  font-family: var(--font-hand);
+  font-size: 19px;
+  font-weight: 500;
+  color: #2a221a;
+  text-align: center;
+  line-height: 1.2;
+  letter-spacing: 0.01em;
+}
+/* Screenshot post-it (mint) */
+.s10-shot {
+  align-self: start;
+  width: 100%;
+  padding: 28px 24px 26px 24px;
+  --mat-tilt: -0.6deg;
+  --tape-tilt: 2deg;
+}
+.s10-shot img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 2px;
+}
+.s10-shot-placeholder {
+  aspect-ratio: 16 / 8.2;
+  background:
+    repeating-linear-gradient(to bottom, rgba(216,232,212,0.55) 0, rgba(216,232,212,0.55) 60px, rgba(216,232,212,0.35) 60px, rgba(216,232,212,0.35) 120px),
+    rgba(216,232,212,0.5);
+  border: 2.5px dashed rgba(42,34,26,0.4);
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-family: var(--font-hand);
+  font-size: 32px;
+  color: rgba(42,34,26,0.55);
+  padding: 30px;
+}
+/* Bottom takeaway — two-line "Don't fear the small build. Easy to maintain. Solves a lot." */
+#slide-10 .s10-takeaway {
+  margin: 40px auto 0;
+  text-align: center;
+  font-family: var(--font-hand);
+  font-weight: 700;
+  font-size: 46px;
+  line-height: 1.2;
+  color: var(--text-dark);
+  transform: rotate(-0.4deg);
+  max-width: 1600px;
+}
+#slide-10 .s10-takeaway .circled,
+#slide-10 .s10-takeaway .underline-warm {
+  color: var(--accent-warm);
+}
+#slide-10 .s10-takeaway .s10-takeaway-sub {
+  display: block;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 400;
+  font-size: 30px;
+  line-height: 1.3;
+  color: rgba(26,24,20,0.6);
+  margin-top: 12px;
+  transform: rotate(0.3deg);
+}
+
+/* =====================================================================
+   SLIDES 9/10 (LEGACY) — example with sketched window + annotations
+   =====================================================================*/
+.example-grid {
+  display: grid;
+  grid-template-columns: 0.95fr 1.05fr;
+  gap: 60px;
+  align-items: center;
+  width: 100%;
+  margin-top: 20px;
+}
+.example-copy h1 { font-size: 96px; }
+.example-copy h2 { font-size: 42px; max-width: 720px; }
+.example-takeaway {
+  font-family: var(--font-hand);
+  font-weight: 700;
+  font-size: 56px;
+  line-height: 1.05;
+  color: var(--accent-warm);
+  margin-top: 24px;
+  transform: rotate(-0.8deg);
+}
+.example-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-top: 26px;
+}
+.example-tags .tag {
+  font-family: var(--font-hand);
+  font-size: 28px;
+  font-weight: 500;
+  color: var(--text-dark);
+  padding: 6px 18px;
+  border: 2.5px solid var(--accent-warm);
+  border-radius: 24px 18px 26px 20px;
+  transform: rotate(var(--tilt,-1deg));
+}
+.example-tags .tag:nth-child(2n) { --tilt: 0.8deg; }
+.example-tags .tag:nth-child(3n) { --tilt: -1.5deg; }
+.example-tags .tag.strike {
+  color: var(--text-muted);
+  border-color: var(--text-muted);
+  text-decoration: line-through;
+  text-decoration-color: var(--accent-warm);
+  text-decoration-thickness: 2.5px;
+}
+
+.sketch-window {
+  position: relative;
+  height: 470px;
+  border-radius: 16px 12px 18px 14px;
+  background: rgba(255,247,232,0.4);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+}
+.sketch-window::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border: 4px dashed var(--text-dark);
+  border-radius: 20px 16px 22px 18px;
+  opacity: 0.55;
+  pointer-events: none;
+}
+.sketch-window .label {
+  font-family: var(--font-hand);
+  font-weight: 600;
+  font-size: 56px;
+  line-height: 1;
+  color: var(--text-dark);
+  margin-bottom: 14px;
+  transform: rotate(-1deg);
+}
+.sketch-window .sub {
+  font-family: var(--font-body);
+  font-size: 22px;
+  color: var(--text-muted);
+  text-align: center;
+}
+.sketch-window-annot {
+  position: absolute;
+  font-family: var(--font-hand);
+  font-size: 30px;
+  font-weight: 600;
+  color: var(--accent-warm);
+  line-height: 1.05;
+}
+.mini-flow-hand {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: 18px;
+  align-items: center;
+  margin-top: 20px;
+}
+.mini-flow-hand .mini {
+  font-family: var(--font-hand);
+  font-size: 30px;
+  font-weight: 500;
+  color: var(--text-dark);
+  text-align: center;
+  padding: 14px 16px;
+  position: relative;
+}
+.mini-flow-hand .mini::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border: 2.5px solid var(--text-dark);
+  border-radius: 16px 12px 18px 14px;
+  pointer-events: none;
+}
+.mini-flow-hand .arr {
+  font-family: var(--font-hand);
+  font-size: 50px;
+  color: var(--accent-warm);
+  font-weight: 700;
+}
+
+/* slide 10 specific — tally marks + $$$ */
+.tally-block {
+  margin-top: 18px;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+.tally {
+  font-family: var(--font-hand);
+  font-weight: 700;
+  font-size: 120px;
+  color: var(--accent-warm);
+  line-height: 0.9;
+  transform: rotate(-3deg);
+  letter-spacing: -0.04em;
+}
+.tally-caption {
+  font-family: var(--font-hand);
+  font-weight: 600;
+  font-size: 44px;
+  color: var(--text-dark);
+  transform: rotate(-1deg);
+}
+.dollar-strike {
+  font-family: var(--font-hand);
+  font-weight: 700;
+  font-size: 64px;
+  color: var(--accent-warm);
+  text-decoration: line-through;
+  text-decoration-color: var(--text-dark);
+  text-decoration-thickness: 4px;
+  display: inline-block;
+  transform: rotate(2deg);
+  margin-top: 16px;
+}
+
+/* =====================================================================
+   SLIDE 11 (REDESIGN) — Scott Brinker's Martech Long Tail / Hypertail
+   chart, recreated as inline SVG. Section I (cool palette: blue + dark).
+   ===================================================================== */
+#slide-11 .s11-headline {
+  font-family: var(--font-hand);
+  font-size: 80px;
+  font-weight: 700;
+  line-height: 1;
+  margin: 30px auto 0;
+  color: var(--text-dark);
+  text-align: center;
+  max-width: 1700px;
+  transform: rotate(-0.4deg);
+}
+#slide-11 .s11-headline .circled {
+  color: var(--accent-cool);
+}
+#slide-11 .s11-quote {
+  text-align: center;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 400;
+  font-size: 28px;
+  line-height: 1.4;
+  color: rgba(26,24,20,0.72);
+  margin: 38px auto 0;
+  max-width: 1500px;
+}
+#slide-11 .s11-quote em {
+  font-style: italic;
+  font-weight: 700;
+  color: var(--accent-cool);
+}
+#slide-11 .s11-quote-attrib {
+  display: block;
+  font-style: normal;
+  font-size: 20px;
+  color: rgba(26,24,20,0.5);
+  margin-top: 4px;
+  font-family: var(--font-body);
+}
+.s11-chart-wrap {
+  width: 100%;
+  max-width: 1780px;
+  margin: 48px auto 0;
+  padding: 0 60px;
+  box-sizing: border-box;
+}
+.s11-chart {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+#slide-11 .s11-source {
+  position: absolute;
+  bottom: 30px;
+  left: 60px;
+  margin: 0;
+  font-family: var(--font-body);
+  font-style: italic;
+  font-size: 14px;
+  color: rgba(26,24,20,0.45);
+  font-weight: 400;
+  text-align: left;
+}
+#slide-11 .s11-source em {
+  font-style: italic;
+  font-weight: 600;
+  color: rgba(26,24,20,0.6);
+}
+
+/* =====================================================================
+   SLIDE 11 (LEGACY) — hypertail constellation
+   ===================================================================== */
+.hypertail-grid {
+  display: grid;
+  grid-template-columns: 0.8fr 1.2fr;
+  gap: 60px;
+  align-items: center;
+  width: 100%;
+  margin-top: 20px;
+}
+.hypertail-quote {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 500;
+  font-size: 56px;
+  line-height: 1.1;
+  color: var(--accent-cool);
+  margin-top: 30px;
+  position: relative;
+  padding-left: 36px;
+}
+.hypertail-quote::before {
+  content: "\201C";
+  position: absolute;
+  left: -20px;
+  top: -30px;
+  font-family: var(--font-hand);
+  font-size: 160px;
+  color: var(--accent-cool);
+  opacity: 0.4;
+  line-height: 1;
+}
+.hypertail-attrib {
+  font-family: var(--font-hand);
+  font-weight: 600;
+  font-size: 32px;
+  color: var(--accent-cool);
+  margin-top: 18px;
+  transform: rotate(-0.5deg);
+}
+.constellation-box {
+  position: relative;
+  height: 620px;
+}
+.constellation-core {
+  position: absolute;
+  left: 30px;
+  top: 220px;
+  width: 280px;
+  height: 170px;
+  padding: 22px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+.constellation-core::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border: 4px solid var(--accent-cool);
+  border-radius: 24px 18px 28px 20px;
+  pointer-events: none;
+}
+.constellation-core strong {
+  font-family: var(--font-hand);
+  font-weight: 700;
+  font-size: 38px;
+  line-height: 1;
+  color: var(--accent-cool);
+}
+.constellation-core span {
+  font-family: var(--font-body);
+  font-size: 18px;
+  color: var(--text-muted);
+  margin-top: 10px;
+  letter-spacing: 0.04em;
+}
+.tail-node {
+  position: absolute;
+  font-family: var(--font-hand);
+  font-weight: 600;
+  text-align: center;
+  color: var(--accent-cool);
+  background: rgba(53,83,119,0.08);
+  border: 2.5px solid var(--accent-cool);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1.05;
+  padding: 8px;
+}
+.tail-node.n1 { width: 180px; height: 180px; left: 360px; top: 80px; font-size: 30px; transform: rotate(-3deg); }
+.tail-node.n2 { width: 150px; height: 150px; left: 520px; top: 320px; font-size: 26px; transform: rotate(4deg); }
+.tail-node.n3 { width: 120px; height: 120px; left: 700px; top: 140px; font-size: 22px; transform: rotate(-5deg); }
+.tail-node.n4 { width: 96px; height: 96px; left: 860px; top: 340px; font-size: 18px; transform: rotate(6deg); }
+.tail-node.n5 { width: 70px; height: 70px; left: 990px; top: 180px; transform: rotate(-8deg); }
+.tail-node.n6 { width: 50px; height: 50px; left: 1080px; top: 380px; }
+.tail-node.n7 { width: 36px; height: 36px; left: 1140px; top: 250px; }
+
+/* =====================================================================
+   SLIDE 12 — custom tools 2x2 sticky-note grid
+   ===================================================================== */
+.tools-grid {
+  display: grid;
+  grid-template-columns: 0.85fr 1.15fr;
+  gap: 90px;
+  align-items: center;
+  width: 100%;
+  max-width: 1740px;
+  margin: 70px auto 0;
+}
+#slide-12 h1 .circled {
+  color: var(--accent-cool);
+}
+#slide-12 .s12-left p.s12-support {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 400;
+  font-size: 30px;
+  line-height: 1.45;
+  color: var(--text-dark);
+  margin: 0;
+  max-width: 600px;
+}
+#slide-12 .s12-support em {
+  font-style: italic;
+  font-weight: 700;
+  color: var(--accent-cool);
+}
+#slide-12 .s12-support .underline-cool {
+  font-style: italic;
+  font-weight: 700;
+  color: var(--accent-cool);
+}
+#slide-12 .s12-transition {
+  font-family: var(--font-hand);
+  font-style: italic;
+  font-weight: 500;
+  font-size: 26px;
+  line-height: 1.3;
+  color: rgba(26,24,20,0.55);
+  margin: 28px 0 0 0;
+  max-width: 560px;
+}
+.tools-principle {
+  position: relative;
+  padding-left: 32px;
+}
+.tools-principle::before {
+  content: "";
+  position: absolute;
+  left: 0; top: 6px; bottom: 6px;
+  width: 10px;
+  background: var(--accent-cool);
+  border-radius: 4px;
+  transform: rotate(-1deg);
+}
+.tools-principle p {
+  font-family: var(--font-body);
+  font-size: 28px;
+  line-height: 1.42;
+  margin: 0 0 14px 0;
+  color: var(--text-dark);
+}
+.tools-principle p em {
+  font-family: var(--font-display);
+  font-style: italic;
+  color: var(--accent-cool);
+  font-weight: 500;
+}
+.tools-2x2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 28px;
+}
+.tool-sticky {
+  position: relative;
+  padding: 28px 32px;
+  border-radius: 6px;
+  min-height: 168px;
+  box-shadow: 0 8px 24px rgba(26,24,20,0.10);
+  transform: rotate(var(--tilt,-1.2deg));
+}
+/* Four distinct sticky colours — change to box 3 (was a duplicate light-blue) */
+.tool-sticky:nth-child(1) { --tilt: -1.2deg; background: rgba(255,247,232,0.78); }   /* warm yellow */
+.tool-sticky:nth-child(2) { --tilt: 1deg;    background: rgba(230,235,240,0.78); }   /* cool light blue */
+.tool-sticky:nth-child(3) { --tilt: 1.4deg;  background: rgba(245,218,213,0.72); }   /* warm rose (changed from duplicate cool) */
+.tool-sticky:nth-child(4) { --tilt: -1deg;   background: #1a1814; color: #f3ede1; }  /* dark */
+.tool-sticky strong {
+  display: block;
+  font-family: var(--font-hand);
+  font-weight: 700;
+  font-size: 50px;
+  line-height: 1;
+  margin-bottom: 12px;
+  color: var(--text-dark);
+}
+.tool-sticky:nth-child(4) strong { color: #f3ede1; }
+#slide-12 .tool-sticky span {
+  font-family: var(--font-body);
+  font-size: 26px;
+  line-height: 1.4;
+  color: var(--text-muted);
+  display: block;
+}
+.tool-sticky:nth-child(4) span { color: rgba(243,237,225,0.7); }
+
+/* =====================================================================
+   SLIDE 13 (REDESIGN) — Personal example: trading agent.
+   Mirrors slide 9's structure (left bullets + grouped boxes, right
+   screenshot post-it), in section-I cool blue palette.
+   ===================================================================== */
+#slide-13 .s13-header {
+  text-align: left;
+  margin: 20px auto 0;
+  max-width: 1760px;
+}
+#slide-13 .s13-headline {
+  font-family: var(--font-hand);
+  font-size: 96px;
+  font-weight: 700;
+  line-height: 1.05;
+  color: var(--text-dark);
+  margin: 0;
+  transform: rotate(-0.4deg);
+}
+#slide-13 .s13-headline .underline-cool {
+  font-style: normal;
+  font-weight: 700;
+}
+.s13-stage {
+  display: grid;
+  grid-template-columns: 0.5fr 1fr;
+  gap: 50px;
+  align-items: stretch;
+  width: 100%;
+  max-width: 1780px;
+  margin: 38px auto 0;
+}
+#slide-13 .s13-left {
+  display: flex;
+  flex-direction: column;
+  gap: 26px;
+}
+#slide-13 .s13-body {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+#slide-13 .s13-body p {
+  font-family: var(--font-hand);
+  font-size: 30px;
+  line-height: 1.35;
+  color: #2a221a;
+  margin: 0;
+  font-weight: 500;
+  max-width: none;
+}
+#slide-13 .s13-group {
+  position: relative;
+  padding: 20px 24px 22px 24px;
+  border: 2.5px dashed rgba(26,24,20,0.4);
+  border-radius: 8px 6px 7px 5px;
+}
+#slide-13 .s13-group--inputs { background: rgba(216, 228, 240, 0.4); }
+#slide-13 .s13-group--loop   { background: rgba(26, 24, 20, 0.10); }
+#slide-13 .s13-group-label {
+  font-family: var(--font-hand);
+  font-weight: 700;
+  font-size: 26px;
+  letter-spacing: 0.02em;
+  margin: 0 0 14px 0;
+  transform: rotate(-1.4deg);
+  display: inline-block;
+}
+#slide-13 .s13-group--inputs .s13-group-label { color: var(--accent-cool); }
+#slide-13 .s13-group--loop   .s13-group-label { color: var(--text-dark); }
+#slide-13 .s13-blocks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+#slide-13 .s13-block {
+  padding: 12px 18px;
+  font-family: var(--font-hand);
+  font-weight: 600;
+  font-size: 26px;
+  color: #2a221a;
+  border: 2.5px solid #2a221a;
+  border-radius: 5px 4px 6px 5px;
+  box-shadow: 3px 4px 0 rgba(26,24,20,0.10);
+  white-space: nowrap;
+}
+#slide-13 .s13-group--inputs .s13-block { background: rgba(216, 228, 240, 0.85); }
+#slide-13 .s13-group--loop   .s13-block { background: #1a1814; color: #f3ede1; }
+#slide-13 .s13-blocks .s13-block:nth-child(1) { transform: rotate(-1.6deg); }
+#slide-13 .s13-blocks .s13-block:nth-child(2) { transform: rotate(1.2deg); }
+#slide-13 .s13-blocks .s13-block:nth-child(3) { transform: rotate(-0.8deg); }
+#slide-13 .s13-blocks .s13-block:nth-child(4) { transform: rotate(1.6deg); }
+.s13-shot {
+  align-self: start;
+  width: 100%;
+  max-width: 850px;
+  margin: 0 auto;
+  padding: 28px 24px 26px 24px;
+  --mat-tilt: 0.6deg;
+  --tape-tilt: -2deg;
+}
+/* Slide-13 specific: darker blue post-it so it contrasts against
+   section-I's cool-gray background. */
+#slide-13 .paper-mat--blue {
+  background: #b8cad8;
+}
+.s13-shot img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 2px;
+}
+#slide-13 .s13-takeaway {
+  margin: 40px auto 0;
+  text-align: center;
+  font-family: var(--font-hand);
+  font-weight: 700;
+  font-size: 52px;
+  line-height: 1.1;
+  color: var(--text-dark);
+  transform: rotate(-0.4deg);
+}
+#slide-13 .s13-takeaway .circled {
+  color: var(--accent-cool);
+}
+
+/* =====================================================================
+   SLIDE 13 (LEGACY) — trading agent screenshot with annotations
+   ===================================================================== */
+.trading-grid {
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 60px;
+  align-items: center;
+  width: 100%;
+  margin-top: 20px;
+}
+.trading-frame {
+  position: relative;
+  height: 600px;
+}
+.trading-frame .hand-frame {
+  height: 100%;
+}
+.trading-frame .hand-frame img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 12px;
+}
+.trading-annot {
+  position: absolute;
+  font-family: var(--font-hand);
+  font-weight: 600;
+  color: var(--accent-cool);
+  z-index: 4;
+}
+.trading-side h2 { font-size: 50px; max-width: 720px; }
+.trading-pattern {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin-top: 28px;
+}
+.trading-pattern .row {
+  font-family: var(--font-hand);
+  font-weight: 500;
+  font-size: 32px;
+  color: var(--text-dark);
+  padding: 14px 18px;
+  position: relative;
+  background: rgba(255,247,232,0.5);
+  border-radius: 12px 9px 14px 10px;
+  transform: rotate(var(--tilt,-0.6deg));
+}
+.trading-pattern .row:nth-child(2) { --tilt: 0.5deg; }
+.trading-pattern .row:nth-child(3) { --tilt: -1deg; }
+.trading-pattern .row:nth-child(4) { --tilt: 0.7deg; }
+.trading-pattern .row::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border: 2.5px solid var(--accent-cool);
+  border-radius: 14px 11px 16px 12px;
+  pointer-events: none;
+}
+
+/* =====================================================================
+   SLIDE 14 — three quote post-its
+   ===================================================================== */
+.quote-postits {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 40px;
+  margin-top: 30px;
+  width: 100%;
+}
+.postit {
+  position: relative;
+  padding: 32px 30px 28px;
+  border-radius: 6px;
+  min-height: 460px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 10px 28px rgba(26,24,20,0.12);
+}
+.postit:nth-child(1) {
+  background: #fff4d2;
+  transform: rotate(-1.8deg);
+}
+.postit:nth-child(2) {
+  background: #1a1814;
+  color: #f3ede1;
+  transform: rotate(1.3deg);
+  margin-top: 24px;
+}
+.postit:nth-child(3) {
+  background: #d8e4f0;
+  transform: rotate(-0.8deg);
+}
+.postit .source-name {
+  font-family: var(--font-hand);
+  font-weight: 700;
+  font-size: 38px;
+  color: var(--accent-cool);
+  margin-bottom: 18px;
+  line-height: 1;
+}
+.postit:nth-child(2) .source-name { color: #f3ede1; }
+.postit .quote-text {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 500;
+  font-size: 34px;
+  line-height: 1.18;
+  color: var(--text-dark);
+  position: relative;
+  padding-left: 8px;
+  margin-bottom: 22px;
+}
+.postit:nth-child(2) .quote-text { color: #f3ede1; }
+.postit .quote-text::before {
+  content: "\201C";
+  font-family: var(--font-hand);
+  font-size: 86px;
+  position: absolute;
+  left: -8px;
+  top: -38px;
+  color: var(--accent-cool);
+  opacity: 0.55;
+  line-height: 1;
+}
+.postit:nth-child(2) .quote-text::before { color: rgba(243,237,225,0.5); }
+.postit .quote-note {
+  font-family: var(--font-body);
+  font-size: 19px;
+  line-height: 1.42;
+  color: var(--text-muted);
+  margin-top: auto;
+}
+.postit:nth-child(2) .quote-note { color: rgba(243,237,225,0.6); }
+.postit .quote-note em {
+  font-family: var(--font-display);
+  font-style: italic;
+  color: var(--accent-cool);
+  font-weight: 500;
+}
+.postit:nth-child(2) .quote-note em { color: #d8e4f0; }
+.converging-margin {
+  position: absolute;
+  right: 60px;
+  bottom: 60px;
+  font-family: var(--font-hand);
+  font-weight: 600;
+  font-size: 36px;
+  color: var(--accent-cool);
+  transform: rotate(-3deg);
+  z-index: 5;
+}
+
+/* =====================================================================
+   SLIDE 15 — move horizontally diagram
+   ===================================================================== */
+.horizontal-layout {
+  display: grid;
+  grid-template-rows: auto auto auto;
+  gap: 30px;
+  width: 100%;
+  margin-top: 24px;
+}
+.horizontal-title {
+  font-family: var(--font-hand);
+  font-weight: 700;
+  font-size: 80px;
+  line-height: 0.96;
+  color: var(--accent-cool);
+  margin: 0;
+  transform: rotate(-0.8deg);
+  max-width: 1500px;
+}
+.horizontal-sub {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 400;
+  font-size: 38px;
+  color: var(--text-muted);
+  margin: 0 0 18px 0;
+}
+.horizontal-body {
+  display: grid;
+  grid-template-columns: 1fr 180px 1fr;
+  gap: 40px;
+  align-items: center;
+}
+.zone {
+  position: relative;
+  padding: 32px;
+  min-height: 320px;
+}
+.zone::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border: 3.5px solid var(--accent-cool);
+  border-radius: 20px 16px 24px 18px;
+  pointer-events: none;
+}
+.zone.dark::before { border-color: var(--text-dark); }
+.zone h3 {
+  font-family: var(--font-hand);
+  font-weight: 700;
+  font-size: 50px;
+  margin: 0 0 18px 0;
+  color: var(--accent-cool);
+}
+.zone.dark h3 { color: var(--text-dark); }
+.zone p {
+  font-family: var(--font-body);
+  font-size: 20px;
+  line-height: 1.4;
+  margin: 0 0 18px 0;
+  max-width: 600px;
+}
+.zone .chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.zone .chip {
+  font-family: var(--font-hand);
+  font-weight: 600;
+  font-size: 32px;
+  color: var(--text-dark);
+  padding: 4px 16px;
+  transform: rotate(var(--tilt,-1deg));
+}
+.zone .chip:nth-child(2) { --tilt: 1deg; }
+.zone .chip:nth-child(3) { --tilt: -0.8deg; }
+.zone .chip:nth-child(4) { --tilt: 1.2deg; }
+.zone .chip::before {
+  content: "";
+  position: absolute;
+}
+.zone.dark .chip { color: var(--text-dark); }
+.zone:not(.dark) .chip { color: var(--accent-cool); }
+
+.bridge-ai {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+}
+.bridge-ai .ai-circle {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  background: var(--accent-cool);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-hand);
+  font-weight: 700;
+  font-size: 76px;
+  line-height: 1;
+  transform: rotate(-3deg);
+  box-shadow: 0 10px 30px rgba(53,83,119,0.4);
+}
+.bridge-ai .ai-arrow {
+  font-family: var(--font-hand);
+  font-size: 44px;
+  font-weight: 700;
+  color: var(--accent-cool);
+  transform: rotate(2deg);
+}
+.excel-margin-note {
+  font-family: var(--font-hand);
+  font-weight: 600;
+  font-size: 32px;
+  color: var(--accent-cool);
+  margin-top: 8px;
+  transform: rotate(-0.6deg);
+}
+
+/* =====================================================================
+   SLIDE 16 — final landing checklist
+   ===================================================================== */
+.final-checklist {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  width: 100%;
+  margin-top: 30px;
+}
+.final-item {
+  position: relative;
+  padding: 28px 32px 28px 84px;
+  background: rgba(255,247,232,0.5);
+  border-radius: 12px 8px 14px 10px;
+  min-height: 180px;
+  transform: rotate(var(--tilt,-0.5deg));
+}
+.final-item:nth-child(2) { --tilt: 0.4deg; }
+.final-item:nth-child(3) { --tilt: 0.8deg; background: rgba(230,235,240,0.55); }
+.final-item:nth-child(4) { --tilt: -0.6deg; background: rgba(230,235,240,0.55); }
+.final-item::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border: 3px solid var(--text-dark);
+  border-radius: 16px 12px 18px 14px;
+  pointer-events: none;
+  opacity: 0.6;
+}
+.final-item .checkbox {
+  position: absolute;
+  left: 24px;
+  top: 32px;
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-hand);
+  font-weight: 700;
+  font-size: 48px;
+  color: var(--accent-cool);
+  line-height: 1;
+}
+.final-item.you-are-here {
+  background: rgba(53,83,119,0.10);
+}
+.final-item.you-are-here::before { border-color: var(--accent-cool); opacity: 1; }
+.final-item strong {
+  display: block;
+  font-family: var(--font-hand);
+  font-weight: 700;
+  font-size: 46px;
+  line-height: 1;
+  margin-bottom: 10px;
+  color: var(--text-dark);
+}
+.final-item span {
+  font-family: var(--font-body);
+  font-size: 22px;
+  line-height: 1.4;
+  color: var(--text-muted);
+}
+.final-item .here-arrow {
+  position: absolute;
+  right: -10px;
+  bottom: 16px;
+  font-family: var(--font-hand);
+  font-weight: 700;
+  font-size: 30px;
+  color: var(--accent-cool);
+  transform: rotate(-3deg);
+}
+
+/* =====================================================================
+   REVEAL — dark notebook cover
+   ===================================================================== */
+.step.reveal {
+  background: transparent;
+  border: none;
+  pointer-events: none;
+  padding: 0;
+  background-image: none;
+}
+.step.reveal .marketing-label {
+  position: absolute;
+  top: 4%;
+  left: 19%;
+  font-family: var(--font-hand);
+  font-size: 260px;
+  font-weight: 600;
+  color: var(--accent-warm);
+  line-height: 1;
+  letter-spacing: 0;
+  white-space: nowrap;
+  pointer-events: none;
+  transform: rotate(-3deg);
+  transform-origin: left center;
+  opacity: 0;
+  transition: opacity 1.6s 1.8s;
+}
+.step.reveal.active .marketing-label { opacity: 1; }
+
+.step.reveal .final-thanks {
+  position: absolute;
+  left: 50%;
+  top: 460px;
+  transform: translateX(-50%) rotate(-2deg);
+  font-family: var(--font-hand);
+  font-weight: 700;
+  font-size: 280px;
+  line-height: 0.88;
+  letter-spacing: 0;
+  color: #f3ede1;
+  margin: 0;
+  text-align: center;
+  width: 1000px;
+  opacity: 0;
+  transition: opacity 1.3s 1s, transform 1.3s 1s;
+  text-shadow: 0 2px 0 rgba(0,0,0,0.4);
+}
+.step.reveal.active .final-thanks {
+  opacity: 1;
+  transform: translateX(-50%) rotate(-2deg);
+}
+
+.step.reveal .final-quote-abs {
+  position: absolute;
+  left: 170px;
+  top: 830px;
+  width: 820px;
+  font-family: var(--font-display);
+  font-size: 32px;
+  line-height: 1.28;
+  font-style: italic;
+  font-weight: 400;
+  color: rgba(243,237,225,0.85);
+  margin: 0;
+  padding-left: 28px;
+  border-left: 4px solid rgba(243,237,225,0.3);
+  opacity: 0;
+  transition: opacity 1.3s 1.1s;
+}
+.step.reveal .final-quote-abs .key-phrase {
+  position: relative;
+  display: inline;
+}
+.step.reveal .final-quote-abs .key-phrase::after {
+  content: "";
+  position: absolute;
+  left: -2%;
+  right: -2%;
+  bottom: -4px;
+  height: 8px;
+  background: var(--accent-warm);
+  opacity: 0.7;
+  transform: rotate(-1deg);
+  border-radius: 50%/60%;
+}
+.step.reveal.active .final-quote-abs { opacity: 1; }
+
+.step.reveal .contact-abs {
+  position: absolute;
+  right: 130px;
+  bottom: 100px;
+  width: 460px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 18px;
+  opacity: 0;
+  transition: opacity 1.3s 1.2s;
+  pointer-events: auto;
+}
+.step.reveal.active .contact-abs { opacity: 1; }
+.step.reveal .contact-abs .contact-name {
+  font-family: var(--font-hand);
+  font-weight: 600;
+  font-size: 38px;
+  color: rgba(243,237,225,0.8);
+  letter-spacing: 0;
+  text-transform: none;
+  margin: 0;
+  text-align: right;
+  transform: rotate(-1.5deg);
+}
+.step.reveal .contact-abs .contact-arrow {
+  font-family: var(--font-hand);
+  font-size: 26px;
+  color: var(--accent-warm);
+  margin-bottom: -6px;
+  align-self: flex-end;
+  transform: rotate(8deg);
+}
+.step.reveal .contact-abs .socials-abs {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 14px;
+}
+.step.reveal .contact-abs a {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 14px;
+  font-family: var(--font-hand);
+  font-weight: 500;
+  font-size: 28px;
+  color: rgba(243,237,225,0.85);
+  text-decoration: none;
+  letter-spacing: 0;
+}
+.step.reveal .contact-abs a:hover { color: white; }
+.step.reveal .contact-abs .icon { width: 30px; height: 30px; display:inline-flex; }
+.step.reveal .contact-abs svg { width: 30px; height: 30px; fill: currentColor; }
+
+</style>
+</head>
+<body class="impress-not-supported">
+
+<div class="fallback-message">
+  <p>This presentation needs a modern browser with CSS 3D transforms.</p>
+</div>
+
+<div class="nav-hint">→ flip the page</div>
+
+<div id="impress"
+     data-width="1920"
+     data-height="1080"
+     data-perspective="1000"
+     data-transition-duration="1000"
+     data-min-scale="0"
+     data-max-scale="20">
+
+  <!-- ═══════════════════════════════════════════════════════
+       0 — TITLE (inside notebook cover)
+       ═══════════════════════════════════════════════════════ -->
+  <div id="slide-0" class="step title"
+       data-x="0" data-y="12000" data-scale="0.3">
+
+
+    <!-- scribbled marketer-questions the talk addresses (CSS-only flat colours) -->
+    <div class="title-postit is-blue   pos-stack-top">SaaS<br>= Dead?</div>
+    <div class="title-postit is-orange pos-stack-bot">What should I do<br>differently for my<br>MarTech stack?</div>
+    <div class="title-postit is-rose   pos-side-tl">Can I<br>vibecode<br>my tool?</div>
+    <div class="title-postit is-mint   pos-side-tr">Is AI<br>gonna take<br>over<br>my job?</div>
+
+    <!-- title content -->
+    <p class="meta">Anticon · 2026</p>
+    <h1>Code is cheap,<br><span class="ink-rust circled-word">Requirements</span> are expensive.</h1>
+    <h2>The shift from SaaS to self-building in MarTech.</h2>
+    <p class="working-note">* working notes of a marketing technology expert</p>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════
+       1 — Bottom-left foot of A
+       ═══════════════════════════════════════════════════════ -->
+  <div id="slide-1" class="step section-A bg-dotgrid"
+       data-x="1500" data-y="12000">
+    <p class="meta">01 · where it all started</p>
+    <div class="s1-v2 notebook-block">
+      <div class="s1-v2-head">
+        <h1>I <span class="ink-rust">fell in love</span> with MarTech in 2012.</h1>
+        <h2>For 15 years, the answer was simple: <em>find the right tool</em>… but <em>now</em>, apparently, we're in a <span class="underlined-word"><em>SaaSpocalypse</em></span>.</h2>
+      </div>
+      <div class="s1-v2-stage">
+        <div class="paper-mat paper-mat--yellow">
+          <img src="../Assets/martechlandscaper2026.png" alt="Chiefmartec MarTech landscape 2011–2026">
+        </div>
+        <div class="s1-v2-here">started here</div>
+        <svg class="s1-v2-arrow" viewBox="0 0 280 80" fill="none" aria-hidden="true">
+          <!-- straight shaft pointing at the 2011 column, slight downward slope for hand-drawn feel -->
+          <path d="M 6 22 L 254 54" stroke="#c84a2e" stroke-width="5" stroke-linecap="round"/>
+          <!-- arrowhead at the tip (270,60) — two short barbs -->
+          <path d="M 246 38 L 268 58 L 240 64" stroke="#c84a2e" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+        </svg>
+      </div>
+    </div>
+    <div class="footer"><span></span><span>01 / 16</span></div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════
+       2 — Bottom-right foot of A
+       ═══════════════════════════════════════════════════════ -->
+  <div id="slide-2" class="step section-A bg-dotgrid-warm"
+       data-x="10500" data-y="12000">
+    <p class="meta">02 · the only choice</p>
+    <h1>In choosing tools… we had <span class="ink-rust">two options</span>.</h1>
+    <div class="s2bb notebook-block">
+      <div class="paper-mat paper-mat--orange">
+        <div class="s2bb-label">BUILD</div>
+        <p class="s2bb-punch">Scope it. Spec it. Engineers. Code review. Repeat for 18 months.</p>
+        <div class="s2bb-problem">the problem</div>
+        <p class="s2bb-outcome">Years of dev — for <em>10%</em> of what you need.</p>
+        <div class="s2bb-tag">control · ownership · slow</div>
+      </div>
+      <div class="paper-mat paper-mat--blue">
+        <div class="s2bb-label">BUY</div>
+        <p class="s2bb-punch">Plug it in. Hits 50 of your requirements. Now: integrate, maintain, keep the data flowing.</p>
+        <div class="s2bb-problem">the problem</div>
+        <p class="s2bb-outcome">Built for <em>1,000</em> other businesses. Not for you.</p>
+        <div class="s2bb-tag">fast · compromise · integration forever</div>
+      </div>
+    </div>
+    <div class="footer"><span></span><span>02 / 16</span></div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════
+       3 — Lower-right diagonal — Build vs Buy
+       ═══════════════════════════════════════════════════════ -->
+  <div id="slide-3" class="step section-A bg-grid"
+       data-x="9700" data-y="9800">
+    <p class="meta">03 · buying everyone else's requirements</p>
+    <h1>Every tool we buy: 1,000 features. We use <span class="ink-rust">50</span>.</h1>
+    <p class="s3-why">Every company works differently — different stacks, different processes. The other <em>950 are built for someone else's workflow</em>, not ours.</p>
+    <div class="s3-grid" data-pill-grid="1000" data-pill-used="50"></div>
+    <div class="s3-needed-block">
+      <div class="s3-needed-label">and we want 5 more →</div>
+      <div class="s3-needed-pills">
+        <span class="blackpill"></span>
+        <span class="blackpill"></span>
+        <span class="blackpill"></span>
+        <span class="blackpill"></span>
+        <span class="blackpill"></span>
+      </div>
+    </div>
+    <div class="s3-options">
+      <p class="s3-options-title">Our options?</p>
+      <div class="s3-option-row">
+        <span class="s3-option-act">Convince the vendor to build them</span>
+        <span class="s3-option-arrow">→</span>
+        <span class="s3-option-fail">wait forever.</span>
+      </div>
+      <div class="s3-option-row">
+        <span class="s3-option-act"><span class="em-cool">Buy</span> another tool, integrate it</span>
+        <span class="s3-option-arrow">→</span>
+        <span class="s3-option-fail">live with integration hell.</span>
+      </div>
+      <div class="s3-option-row">
+        <span class="s3-option-act"><span class="em-dark">Migrate</span> to a new tool entirely</span>
+        <span class="s3-option-arrow">→</span>
+        <span class="s3-option-fail">RFI, months, expense — and something always breaks.</span>
+      </div>
+      <div class="s3-option-row">
+        <span class="s3-option-act"><span class="em-rust">Build</span> them ourselves</span>
+        <span class="s3-option-arrow">→</span>
+        <span class="s3-option-fail">told "too long" — and complain about it forever.</span>
+      </div>
+    </div>
+    <div class="s3-source">source inspiration · Theo Browne, "A letter to tech CEOs"</div>
+    <div class="footer"><span></span><span>03 / 16</span></div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════
+       4 — Lower-left diagonal — SaaS feature problem
+       ═══════════════════════════════════════════════════════ -->
+  <div id="slide-4" class="step section-A bg-grid-warm"
+       data-x="2300" data-y="9800">
+    <p class="meta">04 · what if</p>
+    <div class="s4q-block">
+      <h1 class="s4q-question">
+        What if this is all <span class="underline-warm">changing</span><br>
+        with the maturity of <span class="circled">AI<svg class="circle-svg" viewBox="0 0 220 90" preserveAspectRatio="none"><ellipse cx="110" cy="45" rx="100" ry="36" stroke="#c84a2e" stroke-width="4.5" fill="none" transform="rotate(-2 110 45)"/><ellipse cx="110" cy="45" rx="92" ry="32" stroke="#c84a2e" stroke-width="2.5" fill="none" transform="rotate(3 110 45)" opacity=".6"/></svg></span>?
+      </h1>
+    </div>
+    <div class="paper-mat paper-mat--orange s4q-postit">
+      <span class="s4q-postit-tag">p.s. —</span>
+      <p class="s4q-postit-text">it's moving <em>fast</em>. Faster than any tech advancement in the last 20 years.</p>
+    </div>
+    <div class="footer"><span></span><span>04 / 16</span></div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════
+       5 — Crossbar: left end — Cost inversion
+       ═══════════════════════════════════════════════════════ -->
+  <div id="slide-5" class="step section-A bg-grid-warm"
+       data-x="3150" data-y="7600">
+    <p class="meta">05 · the engineering shift</p>
+    <div class="s5-top notebook-block">
+      <div class="s5-top-header s5-top-header-left">
+        Code is <span class="underline-warm">cheap.</span>
+      </div>
+      <div class="s5-top-header s5-top-header-right">
+        Requirements are
+        <span class="circled">expensive.
+          <svg class="circle-svg" viewBox="0 0 220 90" preserveAspectRatio="none">
+            <ellipse cx="110" cy="45" rx="100" ry="36" stroke="#c84a2e" stroke-width="4.5" fill="none" transform="rotate(-2 110 45)"/>
+            <ellipse cx="110" cy="45" rx="92" ry="32" stroke="#c84a2e" stroke-width="2.5" fill="none" transform="rotate(3 110 45)" opacity=".6"/>
+          </svg>
+        </span>
+      </div>
+      <p class="s5-top-note s5-top-note-left">The bottleneck used to be <em>writing it</em> — slow, back and forth with engineers.</p>
+      <p class="s5-top-note s5-top-note-right">Now it's <em>explaining what we want</em> — and knowing what we need.</p>
+    </div>
+    <div class="paper-mat paper-mat--blue s5-postit s5-postit-left">
+      <span class="s5-postit-tag">what should I focus on?</span>
+      <p class="s5-postit-text">The bottleneck moves from <em>building</em> to <em>explaining</em>.</p>
+    </div>
+    <div class="paper-mat paper-mat--orange s5-postit s5-postit-right">
+      <span class="s5-postit-tag">I should rethink.</span>
+      <p class="s5-postit-text"><span class="build">Build</span> just got <em>more appealing</em>. With <em>velocity</em>.</p>
+    </div>
+    <div class="footer"><span></span><span>05 / 16</span></div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════
+       6 — Crossbar: middle — Decision process
+       ═══════════════════════════════════════════════════════ -->
+  <div id="slide-6" class="step section-A"
+       data-x="6000" data-y="7600">
+    <p class="meta">06 · rethinking the process</p>
+    <h1 class="s6-headline">My MarTech <span class="underline-warm">decision</span> process is <span class="circled">changing<svg class="circle-svg" viewBox="0 0 220 90" preserveAspectRatio="none"><ellipse cx="110" cy="45" rx="100" ry="36" stroke="#c84a2e" stroke-width="4.5" fill="none" transform="rotate(-2 110 45)"/><ellipse cx="110" cy="45" rx="92" ry="32" stroke="#c84a2e" stroke-width="2.5" fill="none" transform="rotate(3 110 45)" opacity=".6"/></svg></span>.</h1>
+    <div class="s6-grid notebook-block">
+      <div class="paper-mat paper-mat--blue">
+        <div class="s6-postit-title">old thinking</div>
+        <div class="s6-postit-subtitle">what I was asking myself.</div>
+        <div class="s6-tick-list">
+          <div class="tick-item"><svg class="tickbox" viewBox="0 0 32 32" fill="none" aria-hidden="true"><path d="M 3 4 L 29 3 L 28 28 L 4 29 Z" stroke="#2a221a" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Can the vendor build it for us?</span></div>
+          <div class="tick-item"><svg class="tickbox" viewBox="0 0 32 32" fill="none" aria-hidden="true"><path d="M 3 4 L 29 3 L 28 28 L 4 29 Z" stroke="#2a221a" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Should we buy another tool?</span></div>
+          <div class="tick-item"><svg class="tickbox" viewBox="0 0 32 32" fill="none" aria-hidden="true"><path d="M 3 4 L 29 3 L 28 28 L 4 29 Z" stroke="#2a221a" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Is migration the answer?</span></div>
+          <div class="tick-item"><svg class="tickbox" viewBox="0 0 32 32" fill="none" aria-hidden="true"><path d="M 3 4 L 29 3 L 28 28 L 4 29 Z" stroke="#2a221a" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Should we build it from scratch?</span></div>
+          <div class="tick-item"><svg class="tickbox" viewBox="0 0 32 32" fill="none" aria-hidden="true"><path d="M 3 4 L 29 3 L 28 28 L 4 29 Z" stroke="#2a221a" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg><span>…or just park the feature.</span></div>
+        </div>
+      </div>
+      <div class="paper-mat paper-mat--orange">
+        <div class="s6-postit-title">new thinking</div>
+        <div class="s6-postit-subtitle">what I'm asking myself now.</div>
+        <div class="s6-tick-list">
+          <div class="tick-item"><svg class="tickbox" viewBox="0 0 32 32" fill="none" aria-hidden="true"><path d="M 3 4 L 29 3 L 28 28 L 4 29 Z" stroke="#2a221a" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Is the current SaaS good infrastructure?</span></div>
+          <div class="tick-item"><svg class="tickbox" viewBox="0 0 32 32" fill="none" aria-hidden="true"><path d="M 3 4 L 29 3 L 28 28 L 4 29 Z" stroke="#2a221a" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Can I access the data / API?</span></div>
+          <div class="tick-item"><svg class="tickbox" viewBox="0 0 32 32" fill="none" aria-hidden="true"><path d="M 3 4 L 29 3 L 28 28 L 4 29 Z" stroke="#2a221a" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Can we build the missing layer on top?</span></div>
+          <div class="tick-item"><svg class="tickbox" viewBox="0 0 32 32" fill="none" aria-hidden="true"><path d="M 3 4 L 29 3 L 28 28 L 4 29 Z" stroke="#2a221a" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Is this tool small enough to replicate?</span></div>
+          <div class="tick-item"><svg class="tickbox" viewBox="0 0 32 32" fill="none" aria-hidden="true"><path d="M 3 4 L 29 3 L 28 28 L 4 29 Z" stroke="#2a221a" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Only THEN — consider a new tool.</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="footer"><span></span><span>06 / 16</span></div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════
+       7 — Crossbar: right end — Buildable foundation
+       ═══════════════════════════════════════════════════════ -->
+  <div id="slide-7" class="step section-A bg-dotgrid-rose"
+       data-x="8850" data-y="7600">
+    <p class="meta">07 · parts, not packages</p>
+    <h1 class="s7-headline">Stop buying packages. Take the <span class="circled">parts<svg class="circle-svg" viewBox="0 0 220 90" preserveAspectRatio="none"><ellipse cx="110" cy="45" rx="100" ry="36" stroke="#c84a2e" stroke-width="4.5" fill="none" transform="rotate(-2 110 45)"/><ellipse cx="110" cy="45" rx="92" ry="32" stroke="#c84a2e" stroke-width="2.5" fill="none" transform="rotate(3 110 45)" opacity=".6"/></svg></span>.</h1>
+    <div class="s7-stage notebook-block">
+      <div class="s7-body">
+        <p>Stop hunting for the <span class="underline-warm">next tool</span> for every small need.</p>
+        <p>Use the SaaS you have as <span class="underline-warm">infrastructure</span>.</p>
+        <p>Take the parts. <span class="underline-warm">Build</span> what you need on top.</p>
+        <p class="s7-ai-note">…and AI gives you the <span class="underline-warm">velocity</span> to assemble.</p>
+      </div>
+      <div class="s7-visual">
+        <div class="s7-saas-row">
+          <div class="s7-saas s7-saas--rust">
+            <div class="s7-saas-label">Salesforce</div>
+            <div class="s7-saas-inner">
+              <div class="s7-pills" data-fill-pills="24" data-pill-color="rust"></div>
+            </div>
+          </div>
+          <div class="s7-saas s7-saas--cool">
+            <div class="s7-saas-label">HubSpot</div>
+            <div class="s7-saas-inner">
+              <div class="s7-pills" data-fill-pills="24" data-pill-color="cool"></div>
+            </div>
+          </div>
+          <div class="s7-saas s7-saas--yellow">
+            <div class="s7-saas-label">Segment</div>
+            <div class="s7-saas-inner">
+              <div class="s7-pills" data-fill-pills="24" data-pill-color="yellow"></div>
+            </div>
+          </div>
+        </div>
+        <div class="s7-flow" aria-hidden="true">
+          <div class="s7-flow-col">
+            <svg viewBox="0 0 24 36" fill="none"><path d="M 12 4 L 12 28" stroke="var(--accent-warm)" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="4 5"/><path d="M 6 22 L 12 30 L 18 22" stroke="var(--accent-warm)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <div class="s7-flow-col">
+            <svg viewBox="0 0 24 36" fill="none"><path d="M 12 4 L 12 28" stroke="var(--accent-cool)" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="4 5"/><path d="M 6 22 L 12 30 L 18 22" stroke="var(--accent-cool)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <div class="s7-flow-col">
+            <svg viewBox="0 0 24 36" fill="none"><path d="M 12 4 L 12 28" stroke="#b8924a" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="4 5"/><path d="M 6 22 L 12 30 L 18 22" stroke="#b8924a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+        </div>
+        <div class="s7-workflow">
+          <div class="s7-workflow-label">your workflow</div>
+          <div class="s7-pills">
+            <span class="s7-pill rust"></span><span class="s7-pill rust"></span><span class="s7-pill empty"></span><span class="s7-pill cool"></span><span class="s7-pill cool"></span><span class="s7-pill empty"></span><span class="s7-pill yellow"></span><span class="s7-pill yellow"></span><span class="s7-pill empty"></span><span class="s7-pill rust"></span><span class="s7-pill cool"></span><span class="s7-pill yellow"></span>
+            <span class="s7-pill empty"></span><span class="s7-pill rust"></span><span class="s7-pill cool"></span><span class="s7-pill yellow"></span><span class="s7-pill empty"></span><span class="s7-pill rust"></span><span class="s7-pill cool"></span><span class="s7-pill empty"></span><span class="s7-pill yellow"></span><span class="s7-pill rust"></span><span class="s7-pill cool"></span><span class="s7-pill yellow"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <p class="s7-tagline">We should start to treat SaaS as <em>Headless infrastructure</em>.<span class="s7-tagline-sub">…and not default to finding a new tool for our requirement.</span></p>
+    <div class="footer"><span></span><span>07 / 16</span></div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════
+       8 — Upper-right diagonal — Diagnostic fork
+       ═══════════════════════════════════════════════════════ -->
+  <div id="slide-8" class="step section-A bg-dotgrid-rose"
+       data-x="7250" data-y="3300">
+    <p class="meta">08 · in practice</p>
+    <h1 class="s8-headline">What does it mean in <span class="circled">practice<svg class="circle-svg" viewBox="0 0 220 90" preserveAspectRatio="none"><ellipse cx="110" cy="45" rx="100" ry="36" stroke="#c84a2e" stroke-width="4.5" fill="none" transform="rotate(-2 110 45)"/><ellipse cx="110" cy="45" rx="92" ry="32" stroke="#c84a2e" stroke-width="2.5" fill="none" transform="rotate(3 110 45)" opacity=".6"/></svg></span>?</h1>
+    <div class="s8-grid notebook-block">
+      <div class="paper-mat paper-mat--rose">
+        <div class="s8-postit-title">strong foundation</div>
+        <div class="s8-postit-subtitle">the layer is bad</div>
+        <div class="s8-body">
+          <p>Deeply embedded.</p>
+          <p>Useful data, good API.</p>
+          <p>Nightmare to migrate.</p>
+          <p>Awful UI — steep learning curve.</p>
+        </div>
+        <div class="s8-next">↘ next: <em>Build on top.</em></div>
+      </div>
+      <div class="paper-mat paper-mat--mint">
+        <div class="s8-postit-title">weak fit</div>
+        <div class="s8-postit-subtitle">few features actually matter</div>
+        <div class="s8-body">
+          <p>Low adoption.</p>
+          <p>Too expensive for what we use.</p>
+          <p>Only a small subset matters.</p>
+          <p>Per-seat pricing — limited access.</p>
+        </div>
+        <div class="s8-next">↘ next: <em>Build the subset.</em></div>
+      </div>
+    </div>
+    <p class="s8-tagline">Let's look at some real examples of <em>headless thinking</em>.<span class="s8-tagline-sub">…where building solves the need faster than going through the buying process.</span></p>
+    <div class="footer"><span></span><span>08 / 16</span></div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════
+       9 — Upper-left diagonal — Example one
+       ═══════════════════════════════════════════════════════ -->
+  <div id="slide-9" class="step section-A bg-dotgrid-warm"
+       data-x="4750" data-y="3300">
+    <p class="meta">09 · build on top</p>
+    <div class="s9-header">
+      <h1 class="s9-headline">Avoid the <span class="underline-warm">Painful</span> migrations.</h1>
+    </div>
+    <div class="s9-stage notebook-block">
+      <div class="s9-left">
+        <div class="s9-body">
+          <p>Deeply embedded.</p>
+          <p>Useful data, good API.</p>
+          <p>Nightmare to migrate.</p>
+          <p>Awful UI — steep learning curve.</p>
+        </div>
+        <div class="s9-group s9-group--kept">
+          <div class="s9-group-label">kept (saas foundation)</div>
+          <div class="s9-blocks">
+            <div class="s9-block">API</div>
+            <div class="s9-block">Data</div>
+            <div class="s9-block">Integrations</div>
+          </div>
+        </div>
+        <div class="s9-group s9-group--rebuilt">
+          <div class="s9-group-label">rebuilt (the new layer)</div>
+          <div class="s9-blocks">
+            <div class="s9-block">Dashboard</div>
+            <div class="s9-block">Automation</div>
+            <div class="s9-block">AI Features</div>
+          </div>
+        </div>
+      </div>
+      <div class="paper-mat paper-mat--yellow s9-shot">
+        <img src="../Assets/buildontheinfrastructure.png" alt="Custom Quantum Network dashboard built on top of the SaaS foundation">
+      </div>
+    </div>
+    <p class="s9-takeaway">Keep the foundation. <span class="circled">Rebuild<svg class="circle-svg" viewBox="0 0 220 90" preserveAspectRatio="none"><ellipse cx="110" cy="45" rx="100" ry="36" stroke="#c84a2e" stroke-width="4.5" fill="none" transform="rotate(-2 110 45)"/><ellipse cx="110" cy="45" rx="92" ry="32" stroke="#c84a2e" stroke-width="2.5" fill="none" transform="rotate(3 110 45)" opacity=".6"/></svg></span> the layer.</p>
+    <div class="footer"><span></span><span>09 / 16</span></div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════
+       10 — Apex of A — Example two
+       ═══════════════════════════════════════════════════════ -->
+  <div id="slide-10" class="step section-A bg-dotgrid-warm"
+       data-x="6000" data-y="0">
+    <p class="meta">10 · build the subset</p>
+    <div class="s10-header">
+      <h1 class="s10-headline">Don't buy <span class="underline-warm">everyone else's</span> tool.</h1>
+    </div>
+    <div class="s10-stage notebook-block">
+      <div class="s10-left">
+        <div class="s10-body">
+          <p>Paying a premium.</p>
+          <p>Only using a fraction of the features.</p>
+          <p>Per-seat pricing — limited team access.</p>
+          <p>Never integrated with the rest of our stack.</p>
+        </div>
+        <div class="s9-group s9-group--rebuilt">
+          <div class="s9-group-label">the features we built →</div>
+          <div class="s9-blocks">
+            <div class="s9-block">Pipeline management</div>
+            <div class="s9-block">Deals management</div>
+            <div class="s9-block">Insertion orders</div>
+            <div class="s9-block">Sales velocity</div>
+            <div class="s9-block">Data hub</div>
+            <div class="s9-block">CMS workflow</div>
+            <div class="s9-block">Open access</div>
+          </div>
+        </div>
+      </div>
+      <div class="paper-mat paper-mat--mint s10-shot">
+        <img src="../Assets/buildthe5feature.png" alt="Custom Merchant Sales Pipeline tool — focused internal build">
+      </div>
+    </div>
+    <p class="s10-takeaway">Don't <span class="circled">fear<svg class="circle-svg" viewBox="0 0 220 90" preserveAspectRatio="none"><ellipse cx="110" cy="45" rx="100" ry="36" stroke="#c84a2e" stroke-width="4.5" fill="none" transform="rotate(-2 110 45)"/><ellipse cx="110" cy="45" rx="92" ry="32" stroke="#c84a2e" stroke-width="2.5" fill="none" transform="rotate(3 110 45)" opacity=".6"/></svg></span> the small build that is <span class="underline-warm">easy to maintain</span> and will <span class="underline-warm">solve a lot</span>.</p>
+    <div class="footer"><span></span><span>10 / 16</span></div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════
+       11 — Top of I — Hypertail
+       ═══════════════════════════════════════════════════════ -->
+  <div id="slide-11" class="step section-I"
+       data-x="14000" data-y="0"
+       data-transition-duration="1500">
+    <p class="meta">11 · the hypertail</p>
+    <h1 class="s11-headline">From 15,000 tools to <span class="circled">Self-Build<svg class="circle-svg" viewBox="0 0 220 90" preserveAspectRatio="none"><ellipse cx="110" cy="45" rx="100" ry="36" stroke="#355377" stroke-width="4.5" fill="none" transform="rotate(-2 110 45)"/><ellipse cx="110" cy="45" rx="92" ry="32" stroke="#355377" stroke-width="2.5" fill="none" transform="rotate(3 110 45)" opacity=".6"/></svg></span>.</h1>
+    <p class="s11-quote">This started as my own hunch. <em>The State of Martech</em> sees the same shift at industry scale. Most of the next <em>billion apps</em> probably won't come from SaaS vendors.</p>
+    <div class="s11-chart-wrap">
+      <svg class="s11-chart" viewBox="0 0 1600 550" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Martech long tail and hypertail distribution chart">
+        <defs>
+          <filter id="s11boxshadow" x="-10%" y="-15%" width="130%" height="140%">
+            <feDropShadow dx="3" dy="4" stdDeviation="0" flood-color="rgba(26,24,20,0.18)"/>
+          </filter>
+        </defs>
+
+        <!-- TOP BANDS — commercial martech / custom martech -->
+        <rect x="100" y="14" width="720" height="44" fill="rgba(53,83,119,0.22)" rx="4"/>
+        <text x="460" y="44" font-family="Manrope, sans-serif" font-size="22" font-weight="700" fill="#355377" text-anchor="middle">commercial martech</text>
+        <rect x="820" y="14" width="720" height="44" fill="rgba(53,83,119,0.52)" rx="4"/>
+        <text x="1180" y="44" font-family="Manrope, sans-serif" font-size="22" font-weight="700" fill="#fefdf3" text-anchor="middle">custom martech</text>
+
+        <!-- Section background tints -->
+        <rect x="100" y="78" width="180" height="370" fill="rgba(53,83,119,0.05)"/>
+        <rect x="280" y="78" width="160" height="370" fill="rgba(53,83,119,0.08)"/>
+        <rect x="440" y="78" width="380" height="370" fill="rgba(53,83,119,0.11)"/>
+        <rect x="820" y="78" width="720" height="370" fill="rgba(53,83,119,0.16)"/>
+
+        <!-- Vertical section dividers -->
+        <line x1="280" y1="78" x2="280" y2="448" stroke="#355377" stroke-width="1.5" stroke-dasharray="6 5" opacity="0.5"/>
+        <line x1="440" y1="78" x2="440" y2="448" stroke="#355377" stroke-width="1.5" stroke-dasharray="6 5" opacity="0.5"/>
+        <line x1="820" y1="78" x2="820" y2="448" stroke="#355377" stroke-width="1.5" stroke-dasharray="6 5" opacity="0.55"/>
+
+        <!-- Section labels — all same size 38px -->
+        <text x="190" y="115" font-family="Caveat, sans-serif" font-size="38" font-weight="700" text-anchor="middle" fill="#2a221a">Head</text>
+        <text x="360" y="115" font-family="Caveat, sans-serif" font-size="38" font-weight="700" text-anchor="middle" fill="#2a221a">Torso</text>
+        <text x="630" y="115" font-family="Caveat, sans-serif" font-size="38" font-weight="700" text-anchor="middle" fill="#2a221a">Tail</text>
+        <text x="1180" y="115" font-family="Caveat, sans-serif" font-size="38" font-weight="700" text-anchor="middle" fill="#355377">Hypertail</text>
+
+        <!-- Long-tail curve -->
+        <path d="M 100 145 Q 200 175, 280 235 Q 360 290, 440 320 Q 600 355, 820 380 Q 1100 392, 1540 398 L 1540 400 L 100 400 Z" fill="rgba(53,83,119,0.20)"/>
+        <path d="M 100 145 Q 200 175, 280 235 Q 360 290, 440 320 Q 600 355, 820 380 Q 1100 392, 1540 398" stroke="#355377" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+
+        <!-- ITEM BOXES at the bottom of the chart, one row per section -->
+        <!-- Head -->
+        <g transform="translate(120, 405) rotate(-1.5 70 18)">
+          <rect width="140" height="38" fill="#fefdf3" stroke="#2a221a" stroke-width="2.2" rx="3" filter="url(#s11boxshadow)"/>
+          <text x="70" y="25" font-family="Caveat, sans-serif" font-size="20" font-weight="600" text-anchor="middle" fill="#2a221a">Major platforms</text>
+        </g>
+        <!-- Torso -->
+        <g transform="translate(285, 405) rotate(1.2 75 18)">
+          <rect width="150" height="38" fill="#fefdf3" stroke="#2a221a" stroke-width="2.2" rx="3" filter="url(#s11boxshadow)"/>
+          <text x="75" y="25" font-family="Caveat, sans-serif" font-size="19" font-weight="600" text-anchor="middle" fill="#2a221a">Leading horizontal</text>
+        </g>
+        <!-- Tail: 3 simplified boxes -->
+        <g transform="translate(455, 405) rotate(-1.8 60 18)">
+          <rect width="120" height="38" fill="#fefdf3" stroke="#2a221a" stroke-width="2.2" rx="3" filter="url(#s11boxshadow)"/>
+          <text x="60" y="25" font-family="Caveat, sans-serif" font-size="20" font-weight="600" text-anchor="middle" fill="#2a221a">Specialized</text>
+        </g>
+        <g transform="translate(587, 405) rotate(1.4 50 18)">
+          <rect width="100" height="38" fill="#fefdf3" stroke="#2a221a" stroke-width="2.2" rx="3" filter="url(#s11boxshadow)"/>
+          <text x="50" y="25" font-family="Caveat, sans-serif" font-size="20" font-weight="600" text-anchor="middle" fill="#2a221a">Service</text>
+        </g>
+        <g transform="translate(698, 405) rotate(-1 50 18)">
+          <rect width="110" height="38" fill="#fefdf3" stroke="#2a221a" stroke-width="2.2" rx="3" filter="url(#s11boxshadow)"/>
+          <text x="55" y="25" font-family="Caveat, sans-serif" font-size="20" font-weight="600" text-anchor="middle" fill="#2a221a">Startups</text>
+        </g>
+        <!-- Self-Build section: Citizen-developed (current, highlighted) + Agent-built (future, lighter) -->
+        <!-- Citizen-developed: deep-blue filled box + hand-drawn circle around it (we are here) -->
+        <g transform="translate(950, 396) rotate(1.2 110 23)">
+          <rect width="220" height="50" fill="rgba(53,83,119,0.65)" stroke="#2a221a" stroke-width="2.5" rx="3" filter="url(#s11boxshadow)"/>
+          <text x="110" y="33" font-family="Caveat, sans-serif" font-size="24" font-weight="700" text-anchor="middle" fill="#fefdf3">Citizen-developed</text>
+          <ellipse cx="110" cy="25" rx="138" ry="42" stroke="#355377" stroke-width="3.5" fill="none" transform="rotate(-2 110 25)"/>
+          <ellipse cx="110" cy="25" rx="130" ry="38" stroke="#355377" stroke-width="2" fill="none" transform="rotate(3 110 25)" opacity="0.6"/>
+        </g>
+        <!-- Agent-built: lighter / dashed border (future) -->
+        <g transform="translate(1310, 405) rotate(-1.8 70 18)">
+          <rect width="140" height="38" fill="rgba(255,253,243,0.6)" stroke="#2a221a" stroke-width="2" stroke-dasharray="5 4" rx="3" filter="url(#s11boxshadow)" opacity="0.85"/>
+          <text x="70" y="25" font-family="Caveat, sans-serif" font-size="19" font-weight="500" text-anchor="middle" fill="rgba(42,34,26,0.65)">Agent-built</text>
+        </g>
+        <!-- "we are here" / "future" annotations (positioned higher, no arrow) -->
+        <text x="1060" y="350" font-family="Caveat, sans-serif" font-size="22" font-weight="600" text-anchor="middle" fill="#355377" font-style="italic" transform="rotate(-3 1060 350)">we are here</text>
+        <text x="1380" y="350" font-family="Caveat, sans-serif" font-size="18" font-weight="500" text-anchor="middle" fill="rgba(42,34,26,0.55)" font-style="italic" transform="rotate(-2 1380 350)">…future</text>
+
+        <!-- X-axis baseline -->
+        <line x1="100" y1="468" x2="1540" y2="468" stroke="#2a221a" stroke-width="2"/>
+
+        <!-- X-axis labels — 1M is current (Citizen), 1B is future (Agent-built) -->
+        <text x="190" y="495" font-family="Caveat, sans-serif" font-size="22" text-anchor="middle" fill="#2a221a">10s</text>
+        <text x="360" y="495" font-family="Caveat, sans-serif" font-size="22" text-anchor="middle" fill="#2a221a">100s</text>
+        <text x="630" y="495" font-family="Caveat, sans-serif" font-size="22" text-anchor="middle" fill="#2a221a">1,000s</text>
+        <text x="1060" y="495" font-family="Caveat, sans-serif" font-size="24" font-weight="700" text-anchor="middle" fill="#355377">1,000,000s</text>
+        <text x="1380" y="495" font-family="Caveat, sans-serif" font-size="22" text-anchor="middle" fill="rgba(42,34,26,0.55)">1,000,000,000s</text>
+
+        <!-- Y-axis label -->
+        <text transform="translate(58 270) rotate(-90)" font-family="Manrope, sans-serif" font-size="14" font-style="italic" fill="rgba(26,24,20,0.55)" text-anchor="middle">scale (number of users)</text>
+
+        <!-- Hyperscaler infrastructure -->
+        <line x1="100" y1="520" x2="1540" y2="520" stroke="#888" stroke-width="1.4" stroke-dasharray="5 4"/>
+        <text x="820" y="540" font-family="Manrope, sans-serif" font-size="14" font-style="italic" fill="rgba(26,24,20,0.55)" text-anchor="middle">hyperscaler infrastructure</text>
+      </svg>
+    </div>
+    <p class="s11-source">Source: <em>The State of Martech 2025</em> — Scott Brinker & Frans Riemersma</p>
+    <div class="footer"><span></span><span>11 / 16</span></div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════
+       12 — I body — Custom tools 2x2
+       ═══════════════════════════════════════════════════════ -->
+  <div id="slide-12" class="step section-I"
+       data-x="14000" data-y="2400">
+    <p class="meta">12 · tools shaped around the work</p>
+    <h1>Personal tools are a way of <span class="circled">working<svg class="circle-svg" viewBox="0 0 220 90" preserveAspectRatio="none"><ellipse cx="110" cy="45" rx="100" ry="36" stroke="#355377" stroke-width="4.5" fill="none" transform="rotate(-2 110 45)"/><ellipse cx="110" cy="45" rx="92" ry="32" stroke="#355377" stroke-width="2.5" fill="none" transform="rotate(3 110 45)" opacity=".6"/></svg></span>.</h1>
+    <div class="tools-grid notebook-block">
+      <div class="s12-left">
+        <p class="s12-support"><em>Billions of apps</em> only makes sense when each one is sized for <span class="underline-cool">a single person, or a small team</span>. That's how the hypertail adds up.</p>
+        <p class="s12-transition">Next: one I built for myself.</p>
+      </div>
+      <div class="tools-2x2">
+        <div class="tool-sticky">
+          <strong>Dashboard</strong>
+          <span>answers one recurring question</span>
+        </div>
+        <div class="tool-sticky">
+          <strong>Automation</strong>
+          <span>removes one painful manual step</span>
+        </div>
+        <div class="tool-sticky">
+          <strong>Custom interface</strong>
+          <span>sits on top of data, APIs or existing SaaS</span>
+        </div>
+        <div class="tool-sticky">
+          <strong>Workflow agent</strong>
+          <span>supports one decision loop or process</span>
+        </div>
+      </div>
+    </div>
+    <div class="footer"><span></span><span>12 / 16</span></div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════
+       13 — Personal example — Trading agent
+       ═══════════════════════════════════════════════════════ -->
+  <div id="slide-13" class="step section-I"
+       data-x="14000" data-y="4800">
+    <p class="meta">13 · personal example</p>
+    <div class="s13-header">
+      <h1 class="s13-headline">Personal example: <span class="underline-cool">trading agent</span>.</h1>
+    </div>
+    <div class="s13-stage notebook-block">
+      <div class="s13-left">
+        <div class="s13-body">
+          <p>An agent built around an evolving strategy.</p>
+          <p>Data, APIs, prompts, a journal.</p>
+          <p>I talk to it daily, I refine the loop.</p>
+          <p>It supports decisions and learns from mistakes.</p>
+        </div>
+        <div class="s13-group s13-group--inputs">
+          <div class="s13-group-label">inputs</div>
+          <div class="s13-blocks">
+            <div class="s13-block">Data</div>
+            <div class="s13-block">APIs</div>
+            <div class="s13-block">Prompts</div>
+            <div class="s13-block">Strategies</div>
+          </div>
+        </div>
+        <div class="s13-group s13-group--loop">
+          <div class="s13-group-label">the loop</div>
+          <div class="s13-blocks">
+            <div class="s13-block">Daily dialogue</div>
+            <div class="s13-block">Decisions</div>
+            <div class="s13-block">Review</div>
+          </div>
+        </div>
+      </div>
+      <div class="paper-mat paper-mat--blue s13-shot">
+        <img src="../Assets/trading%20labs.png" alt="TradingLab private GitHub repo screenshot">
+      </div>
+    </div>
+    <div class="footer"><span></span><span>13 / 16</span></div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════
+       14 — Evolution — Three quote post-its
+       ═══════════════════════════════════════════════════════ -->
+  <div id="slide-14" class="step section-I"
+       data-x="14000" data-y="7200">
+    <p class="meta">Evolution · 14</p>
+    <h1>SaaS is moving toward<br>buildable infrastructure.</h1>
+    <div class="quote-postits notebook-block">
+      <div class="postit">
+        <div class="source-name">Salesforce<br>Headless 360</div>
+        <div class="quote-text">Why should you ever log into Salesforce again?</div>
+        <p class="quote-note">Agents call <em>APIs</em>, invoke <em>MCP tools</em>, and run <em>CLI commands</em> directly.</p>
+      </div>
+      <div class="postit">
+        <div class="source-name">Zapier<br>SDK / MCP</div>
+        <div class="quote-text">Power your product or AI agent with 8,000 app integrations.</div>
+        <p class="quote-note">Workflow API, SDK, MCP and app integrations <em>as infrastructure</em>.</p>
+      </div>
+      <div class="postit">
+        <div class="source-name">PostHog</div>
+        <div class="quote-text">We think PostHog's future is headless.</div>
+        <p class="quote-note">MCP as a <em>gateway for agents</em>; dashboards created via PostHog AI, MCP, API or onboarding wizard.</p>
+      </div>
+      <div class="converging-margin">← all converging</div>
+    </div>
+    <div class="footer"><span>the surface changes — the platform becomes the foundation</span><span>14 / 16</span></div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════
+       15 — Marketing skill — Move horizontally
+       ═══════════════════════════════════════════════════════ -->
+  <div id="slide-15" class="step section-I"
+       data-x="14000" data-y="9600">
+    <p class="meta">Marketing skill · 15</p>
+    <div class="notebook-block" style="width:100%;">
+      <h1 class="horizontal-title">This is becoming<br>a basic marketing skill.</h1>
+      <p class="horizontal-sub">Like Excel — but for workflows.</p>
+      <div class="horizontal-layout">
+        <div class="horizontal-body">
+          <div class="zone">
+            <h3>Your lane</h3>
+            <p>Marketers already understand the work and the requirements <em>inside their channel</em>.</p>
+            <div class="chip-row">
+              <span class="chip">Performance</span>
+              <span class="chip">CRM</span>
+              <span class="chip">Content</span>
+              <span class="chip">Lifecycle</span>
+            </div>
+          </div>
+          <div class="bridge-ai">
+            <div class="ai-circle">AI</div>
+            <div class="ai-arrow">→</div>
+            <div class="excel-margin-note">like Excel —<br>but for workflows</div>
+          </div>
+          <div class="zone dark">
+            <h3>Adjacent skills</h3>
+            <p>AI helps bridge into the systems, data and workflows <em>around the channel</em>.</p>
+            <div class="chip-row">
+              <span class="chip">Data</span>
+              <span class="chip">APIs</span>
+              <span class="chip">Automation</span>
+              <span class="chip">Workflow design</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="footer"><span>move beyond your lane, learn adjacent skills, build workflows</span><span>15 / 16</span></div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════
+       16 — Final landing checklist
+       ═══════════════════════════════════════════════════════ -->
+  <div id="slide-16" class="step section-I"
+       data-x="14000" data-y="12000">
+    <p class="meta">Final landing · 16</p>
+    <h1>Not SaaS to no SaaS.<br>It's how we use it.</h1>
+    <div class="final-checklist notebook-block">
+      <div class="final-item">
+        <div class="checkbox">✓</div>
+        <strong>SaaS is not dead.</strong>
+        <span>But the way we use it is changing.</span>
+      </div>
+      <div class="final-item">
+        <div class="checkbox">✓</div>
+        <strong>Code is cheaper.</strong>
+        <span>Requirements matter more.</span>
+      </div>
+      <div class="final-item">
+        <div class="checkbox">✓</div>
+        <strong>Look for foundations.</strong>
+        <span>Before buying, ask what can be built on top.</span>
+      </div>
+      <div class="final-item you-are-here">
+        <div class="checkbox">☐</div>
+        <strong>Start practising.</strong>
+        <span>Know what you need, and how to shape the tools around it.</span>
+        <div class="here-arrow">← you are here</div>
+      </div>
+    </div>
+    <div class="footer"><span>the next skill is knowing what you need</span><span>16 / 16</span></div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════
+       REVEAL — dark notebook cover
+       ═══════════════════════════════════════════════════════ -->
+  <div id="slide-reveal" class="step reveal"
+       data-x="61020" data-y="33480" data-scale="70"
+       data-transition-duration="4000">
+    <div class="marketing-label">Marketing</div>
+    <h1 class="final-thanks">Thank you.</h1>
+    <p class="final-quote-abs">"The next skill is not knowing every tool. It is <span class="key-phrase">knowing what you need</span>, and how to shape the tools around it."</p>
+    <div class="contact-abs">
+      <p class="contact-name">— Alessandro Moretti</p>
+      <div class="contact-arrow">↘ find me</div>
+      <div class="socials-abs">
+        <a href="https://linkedin.com/in/alemoretti" target="_blank" rel="noopener"><span class="icon"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg></span><span>/alemoretti</span></a>
+        <a href="https://github.com/almoretti" target="_blank" rel="noopener"><span class="icon"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 0C5.374 0 0 5.373 0 12 0 17.302 3.438 21.8 8.207 23.387c.6.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.565 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z"/></svg></span><span>@almoretti</span></a>
+        <a href="https://x.com/alesmoretti" target="_blank" rel="noopener"><span class="icon"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></span><span>@alesmoretti</span></a>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- impress.js core -->
+<script src="https://cdn.jsdelivr.net/gh/impress/impress.js@2.0.0/js/impress.js"></script>
+
+<script>
+  // Populate any [data-pill-grid] container with N small .f pills,
+  // marking the first M as .used. Runs once at script load.
+  document.querySelectorAll('[data-pill-grid]').forEach(function (grid) {
+    var total = parseInt(grid.getAttribute('data-pill-grid'), 10) || 0;
+    var used  = parseInt(grid.getAttribute('data-pill-used'), 10) || 0;
+    var frag  = document.createDocumentFragment();
+    for (var i = 0; i < total; i++) {
+      var d = document.createElement('div');
+      d.className = i < used ? 'f used' : 'f';
+      frag.appendChild(d);
+    }
+    grid.appendChild(frag);
+  });
+
+  // Populate any [data-fill-pills] container with N uniform-color .s7-pill
+  // pills. Used by slide 7 for the per-SaaS pill grids.
+  document.querySelectorAll('[data-fill-pills]').forEach(function (grid) {
+    var count = parseInt(grid.getAttribute('data-fill-pills'), 10) || 0;
+    var color = grid.getAttribute('data-pill-color') || '';
+    var frag  = document.createDocumentFragment();
+    for (var i = 0; i < count; i++) {
+      var d = document.createElement('div');
+      d.className = 's7-pill ' + color;
+      frag.appendChild(d);
+    }
+    grid.appendChild(frag);
+  });
+
+  impress().init();
+
+  // Custom substep handler — captures arrows in capture phase
+  (function () {
+    let activeStep = null;
+    let substeps = [];
+    let substepIndex = 0;
+
+    document.addEventListener('impress:stepenter', (e) => {
+      activeStep = e.target;
+      substeps = Array.from(activeStep.querySelectorAll('.substep'));
+      substepIndex = 0;
+      substeps.forEach(s => s.classList.remove('substep-visible'));
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (!activeStep || substeps.length === 0) return;
+
+      if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') {
+        if (substepIndex < substeps.length) {
+          substeps[substepIndex].classList.add('substep-visible');
+          substepIndex++;
+          e.stopImmediatePropagation();
+          e.preventDefault();
+        }
+      } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+        if (substepIndex > 0) {
+          substepIndex--;
+          substeps[substepIndex].classList.remove('substep-visible');
+          e.stopImmediatePropagation();
+          e.preventDefault();
+        }
+      }
+    }, true);
+  })();
+</script>
+
+</body>
+</html>

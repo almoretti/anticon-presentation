@@ -1,0 +1,28 @@
+.handdrawn-mark {
+  position: absolute;
+  pointer-events: none;
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  background-position: center;
+}
+
+.handdrawn-arrow-right { background-image: url("./arrow-right.svg"); }
+.handdrawn-arrow-down { background-image: url("./arrow-down.svg"); }
+.handdrawn-circle { background-image: url("./circle-rough.svg"); }
+.handdrawn-underline { background-image: url("./underline-warm.svg"); }
+.handdrawn-bracket-left { background-image: url("./bracket-left.svg"); }
+.handdrawn-scribble-cloud { background-image: url("./scribble-cloud.svg"); }
+.handdrawn-x { background-image: url("./x-mark.svg"); }
+
+.asset-postit {
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  background-position: center;
+}
+
+.asset-postit-folded { background-image: url("../postit/postit-folded-yellow-transparent.png"); }
+.asset-postit-scrambled { background-image: url("../postit/postit-scrambled-orange-transparent.png"); }
+.asset-postit-straight { background-image: url("../postit/postit-straight-blue-transparent.png"); }
+.asset-postit-beautiful { background-image: url("../postit/postit-beautiful-lavender-transparent.png"); }
+.asset-postit-paper-attach { background-image: url("../postit/postit-paper-attach-mint-transparent.png"); }
+.asset-postit-side-attached { background-image: url("../postit/postit-side-attached-coral-transparent.png"); }

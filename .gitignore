@@ -1,0 +1,29 @@
+# Dependencies
+node_modules/
+
+# Generated screenshots (regenerable with capture-deck.js)
+screenshots-*/
+**/screenshots-*/
+
+# Old draft archives (not part of the public deck)
+Drafts/archive-*/
+
+# Private research material (third-party transcripts, raw exports,
+# session-restore backups). Working notes are kept; everything else is private.
+Research/items/
+Research/transcripts/
+Research/raw-export/
+Research/*.before-*.md
+Research/missing-slides-*.md
+
+# Large reference PDFs downloaded ad-hoc
+*.pdf
+
+# OS / editor cruft
+.DS_Store
+Thumbs.db
+desktop.ini
+*.swp
+*.swo
+.vscode/
+.idea/
