@@ -3073,127 +3073,72 @@ html, body {
 }
 
 /* =====================================================================
-   SLIDE 15 — move horizontally diagram
+   SLIDE 15 — Channels anchored to "you" on the axis, Excel post-it right
    ===================================================================== */
-.horizontal-layout {
-  display: grid;
-  grid-template-rows: auto auto auto;
-  gap: 30px;
-  width: 100%;
-  margin-top: 24px;
-}
-.horizontal-title {
-  font-family: var(--font-hand);
-  font-weight: 700;
-  font-size: 80px;
-  line-height: 0.96;
-  color: var(--accent-cool);
-  margin: 0;
-  transform: rotate(-0.8deg);
+#slide-15 h1 {
+  font-size: 92px;
+  line-height: 0.98;
+  margin: 14px 0 22px 0;
   max-width: 1500px;
+  transform: rotate(-0.6deg);
 }
-.horizontal-sub {
+#slide-15 .s15-diagram {
+  width: 100%;
+  max-width: 1820px;
+  margin: 0 auto;
+  position: relative;
+}
+#slide-15 .s15-axis-caption {
+  font-family: var(--font-hand);
+  font-style: italic;
+  font-weight: 700;
+  font-size: 40px;
+  line-height: 1;
+  color: var(--accent-cool);
+  text-align: center;
+  margin: 0 0 6px 0;
+}
+#slide-15 .s15-stage {
+  position: relative;
+  width: 100%;
+}
+#slide-15 .s15-svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+#slide-15 .s15-excel-postit {
+  position: absolute;
+  right: 3%;
+  top: 30%;
+  width: 64%;
+  background: #fff4d2;
+  padding: 50px 58px;
+  border-radius: 6px;
+  box-shadow: 0 14px 36px rgba(26,24,20,0.16);
+  transform: rotate(1.2deg);
+  display: flex;
+  align-items: center;
+  min-height: 280px;
+}
+#slide-15 .s15-excel-quote {
   font-family: var(--font-display);
   font-style: italic;
-  font-weight: 400;
-  font-size: 38px;
-  color: var(--text-muted);
-  margin: 0 0 18px 0;
-}
-.horizontal-body {
-  display: grid;
-  grid-template-columns: 1fr 180px 1fr;
-  gap: 40px;
-  align-items: center;
-}
-.zone {
-  position: relative;
-  padding: 32px;
-  min-height: 320px;
-}
-.zone::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border: 3.5px solid var(--accent-cool);
-  border-radius: 20px 16px 24px 18px;
-  pointer-events: none;
-}
-.zone.dark::before { border-color: var(--text-dark); }
-.zone h3 {
-  font-family: var(--font-hand);
-  font-weight: 700;
-  font-size: 50px;
-  margin: 0 0 18px 0;
-  color: var(--accent-cool);
-}
-.zone.dark h3 { color: var(--text-dark); }
-.zone p {
-  font-family: var(--font-body);
-  font-size: 20px;
-  line-height: 1.4;
-  margin: 0 0 18px 0;
-  max-width: 600px;
-}
-.zone .chip-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-}
-.zone .chip {
-  font-family: var(--font-hand);
-  font-weight: 600;
-  font-size: 32px;
+  font-weight: 500;
+  font-size: 56px;
+  line-height: 1.18;
   color: var(--text-dark);
-  padding: 4px 16px;
-  transform: rotate(var(--tilt,-1deg));
+  margin: 0;
 }
-.zone .chip:nth-child(2) { --tilt: 1deg; }
-.zone .chip:nth-child(3) { --tilt: -0.8deg; }
-.zone .chip:nth-child(4) { --tilt: 1.2deg; }
-.zone .chip::before {
-  content: "";
-  position: absolute;
-}
-.zone.dark .chip { color: var(--text-dark); }
-.zone:not(.dark) .chip { color: var(--accent-cool); }
-
-.bridge-ai {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 14px;
-}
-.bridge-ai .ai-circle {
-  width: 150px;
-  height: 150px;
-  border-radius: 50%;
-  background: var(--accent-cool);
-  color: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+#slide-15 .s15-closer {
   font-family: var(--font-hand);
-  font-weight: 700;
-  font-size: 76px;
-  line-height: 1;
-  transform: rotate(-3deg);
-  box-shadow: 0 10px 30px rgba(53,83,119,0.4);
-}
-.bridge-ai .ai-arrow {
-  font-family: var(--font-hand);
-  font-size: 44px;
-  font-weight: 700;
-  color: var(--accent-cool);
-  transform: rotate(2deg);
-}
-.excel-margin-note {
-  font-family: var(--font-hand);
-  font-weight: 600;
+  font-style: italic;
+  font-weight: 500;
   font-size: 32px;
-  color: var(--accent-cool);
-  margin-top: 8px;
-  transform: rotate(-0.6deg);
+  line-height: 1.3;
+  color: rgba(26,24,20,0.55);
+  text-align: center;
+  margin: 18px auto 0;
 }
 
 /* =====================================================================
@@ -4027,41 +3972,59 @@ html, body {
        ═══════════════════════════════════════════════════════ -->
   <div id="slide-15" class="step section-I"
        data-x="14000" data-y="9600">
-    <p class="meta">Marketing skill · 15</p>
-    <div class="notebook-block" style="width:100%;">
-      <h1 class="horizontal-title">This is becoming<br>a basic marketing skill.</h1>
-      <p class="horizontal-sub">Like Excel — but for workflows.</p>
-      <div class="horizontal-layout">
-        <div class="horizontal-body">
-          <div class="zone">
-            <h3>Your lane</h3>
-            <p>Marketers already understand the work and the requirements <em>inside their channel</em>.</p>
-            <div class="chip-row">
-              <span class="chip">Performance</span>
-              <span class="chip">CRM</span>
-              <span class="chip">Content</span>
-              <span class="chip">Lifecycle</span>
-            </div>
-          </div>
-          <div class="bridge-ai">
-            <div class="ai-circle">AI</div>
-            <div class="ai-arrow">→</div>
-            <div class="excel-margin-note">like Excel —<br>but for workflows</div>
-          </div>
-          <div class="zone dark">
-            <h3>Adjacent skills</h3>
-            <p>AI helps bridge into the systems, data and workflows <em>around the channel</em>.</p>
-            <div class="chip-row">
-              <span class="chip">Data</span>
-              <span class="chip">APIs</span>
-              <span class="chip">Automation</span>
-              <span class="chip">Workflow design</span>
-            </div>
-          </div>
+    <p class="meta">15 · marketing skill</p>
+    <h1>This is becoming<br>a basic <span class="underline-cool">marketing skill</span>.</h1>
+    <div class="s15-diagram notebook-block">
+      <p class="s15-axis-caption">AI moves you horizontally</p>
+      <div class="s15-stage">
+        <svg class="s15-svg" viewBox="0 0 1760 720" preserveAspectRatio="xMidYMid meet">
+          <!-- ===== Top: horizontal axis ===== -->
+          <line x1="40" y1="70" x2="1700" y2="70" stroke="#355377" stroke-width="5" stroke-linecap="round"/>
+          <polygon points="1695,50 1736,70 1695,90" fill="#355377"/>
+          <line x1="460"  y1="48" x2="460"  y2="92" stroke="#355377" stroke-width="5" stroke-linecap="round"/>
+          <line x1="850"  y1="48" x2="850"  y2="92" stroke="#355377" stroke-width="5" stroke-linecap="round"/>
+          <line x1="1240" y1="48" x2="1240" y2="92" stroke="#355377" stroke-width="5" stroke-linecap="round"/>
+          <line x1="1530" y1="48" x2="1530" y2="92" stroke="#355377" stroke-width="5" stroke-linecap="round"/>
+          <text x="460"  y="128" text-anchor="middle" font-family="Caveat, cursive" font-size="42" font-weight="600" fill="#1a1814">Data</text>
+          <text x="850"  y="128" text-anchor="middle" font-family="Caveat, cursive" font-size="42" font-weight="600" fill="#1a1814">APIs</text>
+          <text x="1240" y="128" text-anchor="middle" font-family="Caveat, cursive" font-size="42" font-weight="600" fill="#1a1814">Automation</text>
+          <text x="1530" y="128" text-anchor="middle" font-family="Caveat, cursive" font-size="42" font-weight="600" fill="#1a1814">Workflow design</text>
+
+          <!-- "you" dot on the axis (anchor point) -->
+          <circle cx="40" cy="70" r="19" fill="#355377"/>
+
+          <!-- Spine: continuous line from "you" dot down to the box bottom, forming the leftmost edge -->
+          <line x1="40" y1="70" x2="40" y2="640" stroke="#355377" stroke-width="5" stroke-linecap="round"/>
+
+          <!-- Channel box (subtle fill, top + right + bottom edges; leftmost edge IS the spine) -->
+          <rect x="40" y="260" width="260" height="380" fill="rgba(53,83,119,0.05)"/>
+          <line x1="40"  y1="260" x2="300" y2="260" stroke="#355377" stroke-width="3" stroke-linecap="round"/>
+          <line x1="300" y1="260" x2="300" y2="640" stroke="#355377" stroke-width="3" stroke-linecap="round"/>
+          <line x1="40"  y1="640" x2="300" y2="640" stroke="#355377" stroke-width="3" stroke-linecap="round"/>
+
+          <!-- Lane dividers (internal only) -->
+          <line x1="105" y1="260" x2="105" y2="640" stroke="rgba(53,83,119,0.45)" stroke-width="2"/>
+          <line x1="170" y1="260" x2="170" y2="640" stroke="rgba(53,83,119,0.45)" stroke-width="2"/>
+          <line x1="235" y1="260" x2="235" y2="640" stroke="rgba(53,83,119,0.45)" stroke-width="2"/>
+
+          <!-- Rotated channel labels (top-to-bottom inside their lane) -->
+          <text x="72"  y="450" text-anchor="middle" transform="rotate(-90 72 450)"  font-family="Caveat, cursive" font-size="36" font-weight="600" fill="#355377">Performance</text>
+          <text x="137" y="450" text-anchor="middle" transform="rotate(-90 137 450)" font-family="Caveat, cursive" font-size="36" font-weight="600" fill="#355377">CRM</text>
+          <text x="202" y="450" text-anchor="middle" transform="rotate(-90 202 450)" font-family="Caveat, cursive" font-size="36" font-weight="600" fill="#355377">Content</text>
+          <text x="267" y="450" text-anchor="middle" transform="rotate(-90 267 450)" font-family="Caveat, cursive" font-size="36" font-weight="600" fill="#355377">Lifecycle</text>
+
+          <!-- "stuck in your channel" caption beneath the channel box -->
+          <text x="170" y="690" text-anchor="middle" font-family="Caveat, cursive" font-style="italic" font-size="30" font-weight="500" fill="rgba(26,24,20,0.6)">stuck in your channel.</text>
+        </svg>
+
+        <!-- Excel post-it overlayed on the right side -->
+        <div class="s15-excel-postit">
+          <p class="s15-excel-quote">"AI is a tool, like Excel was when we all had to learn it."</p>
         </div>
       </div>
     </div>
-    <div class="footer"><span>move beyond your lane, learn adjacent skills, build workflows</span><span>15 / 16</span></div>
+    <p class="s15-closer">go as deep as your work requires.</p>
+    <div class="footer"><span></span><span>15 / 16</span></div>
   </div>
 
   <!-- ═══════════════════════════════════════════════════════
