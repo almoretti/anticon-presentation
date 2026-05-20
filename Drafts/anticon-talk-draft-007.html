@@ -3142,78 +3142,75 @@ html, body {
 }
 
 /* =====================================================================
-   SLIDE 16 — final landing checklist
+   SLIDE 16 — Final landing: retrospective recap + CTA band
    ===================================================================== */
-.final-checklist {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 24px;
-  width: 100%;
-  margin-top: 30px;
+#slide-16 h1 {
+  font-size: 112px;
+  line-height: 1;
+  margin: 18px 0 36px 0;
+  max-width: 1500px;
+  transform: rotate(-0.8deg);
 }
-.final-item {
-  position: relative;
-  padding: 28px 32px 28px 84px;
-  background: rgba(255,247,232,0.5);
-  border-radius: 12px 8px 14px 10px;
-  min-height: 180px;
-  transform: rotate(var(--tilt,-0.5deg));
-}
-.final-item:nth-child(2) { --tilt: 0.4deg; }
-.final-item:nth-child(3) { --tilt: 0.8deg; background: rgba(230,235,240,0.55); }
-.final-item:nth-child(4) { --tilt: -0.6deg; background: rgba(230,235,240,0.55); }
-.final-item::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border: 3px solid var(--text-dark);
-  border-radius: 16px 12px 18px 14px;
-  pointer-events: none;
-  opacity: 0.6;
-}
-.final-item .checkbox {
-  position: absolute;
-  left: 24px;
-  top: 32px;
-  width: 44px;
-  height: 44px;
+#slide-16 .s16-recap {
   display: flex;
-  align-items: center;
-  justify-content: center;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
+  max-width: 1660px;
+  margin: 0 auto;
+}
+#slide-16 .s16-item {
+  position: relative;
+  display: flex;
+  align-items: baseline;
+  gap: 32px;
+  padding: 22px 44px;
+  background: rgba(53,83,119,0.08);
+  border: 3px solid var(--accent-cool);
+  border-radius: 14px 10px 16px 12px;
+  transform: rotate(var(--tilt,-0.4deg));
+}
+#slide-16 .s16-item:nth-child(2) { --tilt: 0.3deg; }
+#slide-16 .s16-item:nth-child(3) { --tilt: -0.5deg; }
+#slide-16 .s16-item:nth-child(4) { --tilt: 0.4deg; }
+#slide-16 .s16-check {
   font-family: var(--font-hand);
   font-weight: 700;
   font-size: 48px;
   color: var(--accent-cool);
   line-height: 1;
+  flex: 0 0 auto;
 }
-.final-item.you-are-here {
-  background: rgba(53,83,119,0.10);
-}
-.final-item.you-are-here::before { border-color: var(--accent-cool); opacity: 1; }
-.final-item strong {
-  display: block;
+#slide-16 .s16-text {
   font-family: var(--font-hand);
-  font-weight: 700;
-  font-size: 46px;
-  line-height: 1;
-  margin-bottom: 10px;
+  font-weight: 600;
+  font-size: 42px;
+  line-height: 1.18;
   color: var(--text-dark);
+  margin: 0;
 }
-.final-item span {
-  font-family: var(--font-body);
-  font-size: 22px;
-  line-height: 1.4;
-  color: var(--text-muted);
+#slide-16 .s16-cta {
+  margin: 44px auto 0;
+  text-align: center;
+  max-width: 1500px;
 }
-.final-item .here-arrow {
-  position: absolute;
-  right: -10px;
-  bottom: 16px;
+#slide-16 .s16-cta-headline {
   font-family: var(--font-hand);
   font-weight: 700;
-  font-size: 30px;
+  font-size: 80px;
+  line-height: 1;
   color: var(--accent-cool);
-  transform: rotate(-3deg);
+  margin: 0 0 12px 0;
+  transform: rotate(-0.5deg);
+}
+#slide-16 .s16-cta-tagline {
+  font-family: var(--font-hand);
+  font-style: italic;
+  font-weight: 500;
+  font-size: 34px;
+  line-height: 1.3;
+  color: rgba(26,24,20,0.6);
+  margin: 0;
 }
 
 /* =====================================================================
@@ -3228,10 +3225,10 @@ html, body {
 }
 .step.reveal .marketing-label {
   position: absolute;
-  top: 4%;
-  left: 19%;
+  top: 90px;
+  left: 380px;
   font-family: var(--font-hand);
-  font-size: 260px;
+  font-size: 130px;
   font-weight: 600;
   color: var(--accent-warm);
   line-height: 1;
@@ -3247,41 +3244,41 @@ html, body {
 
 .step.reveal .final-thanks {
   position: absolute;
-  left: 50%;
-  top: 460px;
-  transform: translateX(-50%) rotate(-2deg);
+  right: 80px;
+  top: 70px;
+  transform: rotate(-2deg);
+  transform-origin: right top;
   font-family: var(--font-hand);
   font-weight: 700;
-  font-size: 280px;
+  font-size: 160px;
   line-height: 0.88;
   letter-spacing: 0;
   color: #f3ede1;
   margin: 0;
-  text-align: center;
-  width: 1000px;
+  text-align: right;
   opacity: 0;
   transition: opacity 1.3s 1s, transform 1.3s 1s;
   text-shadow: 0 2px 0 rgba(0,0,0,0.4);
 }
 .step.reveal.active .final-thanks {
   opacity: 1;
-  transform: translateX(-50%) rotate(-2deg);
+  transform: rotate(-2deg);
 }
 
 .step.reveal .final-quote-abs {
   position: absolute;
   left: 170px;
-  top: 830px;
-  width: 820px;
+  top: 560px;
+  width: 1180px;
   font-family: var(--font-display);
-  font-size: 32px;
-  line-height: 1.28;
+  font-size: 42px;
+  line-height: 1.32;
   font-style: italic;
   font-weight: 400;
-  color: rgba(243,237,225,0.85);
+  color: rgba(243,237,225,0.88);
   margin: 0;
-  padding-left: 28px;
-  border-left: 4px solid rgba(243,237,225,0.3);
+  padding-left: 32px;
+  border-left: 5px solid rgba(243,237,225,0.35);
   opacity: 0;
   transition: opacity 1.3s 1.1s;
 }
@@ -4032,32 +4029,31 @@ html, body {
        ═══════════════════════════════════════════════════════ -->
   <div id="slide-16" class="step section-I"
        data-x="14000" data-y="12000">
-    <p class="meta">Final landing · 16</p>
-    <h1>Not SaaS to no SaaS.<br>It's how we use it.</h1>
-    <div class="final-checklist notebook-block">
-      <div class="final-item">
-        <div class="checkbox">✓</div>
-        <strong>SaaS is not dead.</strong>
-        <span>But the way we use it is changing.</span>
+    <p class="meta">16 · final landing</p>
+    <h1>Where this leaves us.</h1>
+    <div class="s16-recap notebook-block">
+      <div class="s16-item">
+        <div class="s16-check">&#10003;</div>
+        <p class="s16-text">SaaS is not dead, but the way we use it is changing.</p>
       </div>
-      <div class="final-item">
-        <div class="checkbox">✓</div>
-        <strong>Code is cheaper.</strong>
-        <span>Requirements matter more.</span>
+      <div class="s16-item">
+        <div class="s16-check">&#10003;</div>
+        <p class="s16-text">Code is cheaper, requirements matter more.</p>
       </div>
-      <div class="final-item">
-        <div class="checkbox">✓</div>
-        <strong>Look for foundations.</strong>
-        <span>Before buying, ask what can be built on top.</span>
+      <div class="s16-item">
+        <div class="s16-check">&#10003;</div>
+        <p class="s16-text">Look for foundations, build what's personal.</p>
       </div>
-      <div class="final-item you-are-here">
-        <div class="checkbox">☐</div>
-        <strong>Start practising.</strong>
-        <span>Know what you need, and how to shape the tools around it.</span>
-        <div class="here-arrow">← you are here</div>
+      <div class="s16-item">
+        <div class="s16-check">&#10003;</div>
+        <p class="s16-text">Expand horizontally, it's the new basic skill.</p>
       </div>
     </div>
-    <div class="footer"><span>the next skill is knowing what you need</span><span>16 / 16</span></div>
+    <div class="s16-cta">
+      <p class="s16-cta-headline">Start using the tools.</p>
+      <p class="s16-cta-tagline">the learning curve when you move away from the chat is quite steep.</p>
+    </div>
+    <div class="footer"><span></span><span>16 / 16</span></div>
   </div>
 
   <!-- ═══════════════════════════════════════════════════════
