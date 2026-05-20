@@ -3244,70 +3244,36 @@ html, body {
 
 .step.reveal .final-thanks {
   position: absolute;
-  right: 80px;
-  top: 70px;
-  transform: rotate(-2deg);
-  transform-origin: right top;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%) rotate(-2deg);
+  transform-origin: center center;
   font-family: var(--font-hand);
   font-weight: 700;
-  font-size: 160px;
+  font-size: 360px;
   line-height: 0.88;
   letter-spacing: 0;
   color: #f3ede1;
   margin: 0;
-  text-align: right;
+  text-align: center;
+  white-space: nowrap;
   opacity: 0;
   transition: opacity 1.3s 1s, transform 1.3s 1s;
-  text-shadow: 0 2px 0 rgba(0,0,0,0.4);
+  text-shadow: 0 4px 0 rgba(0,0,0,0.4);
 }
 .step.reveal.active .final-thanks {
   opacity: 1;
-  transform: rotate(-2deg);
+  transform: translate(-50%, -50%) rotate(-2deg);
 }
-
-.step.reveal .final-quote-abs {
-  position: absolute;
-  left: 170px;
-  top: 560px;
-  width: 1180px;
-  font-family: var(--font-display);
-  font-size: 42px;
-  line-height: 1.32;
-  font-style: italic;
-  font-weight: 400;
-  color: rgba(243,237,225,0.88);
-  margin: 0;
-  padding-left: 32px;
-  border-left: 5px solid rgba(243,237,225,0.35);
-  opacity: 0;
-  transition: opacity 1.3s 1.1s;
-}
-.step.reveal .final-quote-abs .key-phrase {
-  position: relative;
-  display: inline;
-}
-.step.reveal .final-quote-abs .key-phrase::after {
-  content: "";
-  position: absolute;
-  left: -2%;
-  right: -2%;
-  bottom: -4px;
-  height: 8px;
-  background: var(--accent-warm);
-  opacity: 0.7;
-  transform: rotate(-1deg);
-  border-radius: 50%/60%;
-}
-.step.reveal.active .final-quote-abs { opacity: 1; }
 
 .step.reveal .contact-abs {
   position: absolute;
-  right: 130px;
+  left: 130px;
   bottom: 100px;
   width: 460px;
   display: flex;
   flex-direction: column;
-  align-items: flex-end;
+  align-items: flex-start;
   gap: 18px;
   opacity: 0;
   transition: opacity 1.3s 1.2s;
@@ -3322,7 +3288,7 @@ html, body {
   letter-spacing: 0;
   text-transform: none;
   margin: 0;
-  text-align: right;
+  text-align: left;
   transform: rotate(-1.5deg);
 }
 .step.reveal .contact-abs .contact-arrow {
@@ -3330,19 +3296,19 @@ html, body {
   font-size: 26px;
   color: var(--accent-warm);
   margin-bottom: -6px;
-  align-self: flex-end;
+  align-self: flex-start;
   transform: rotate(8deg);
 }
 .step.reveal .contact-abs .socials-abs {
   display: flex;
   flex-direction: column;
-  align-items: flex-end;
+  align-items: flex-start;
   gap: 14px;
 }
 .step.reveal .contact-abs a {
   display: flex;
   align-items: center;
-  justify-content: flex-end;
+  justify-content: flex-start;
   gap: 14px;
   font-family: var(--font-hand);
   font-weight: 500;
@@ -4064,7 +4030,6 @@ html, body {
        data-transition-duration="4000">
     <div class="marketing-label">Marketing</div>
     <h1 class="final-thanks">Thank you.</h1>
-    <p class="final-quote-abs">"The next skill is not knowing every tool. It is <span class="key-phrase">knowing what you need</span>, and how to shape the tools around it."</p>
     <div class="contact-abs">
       <p class="contact-name">— Alessandro Moretti</p>
       <div class="contact-arrow">↘ find me</div>
